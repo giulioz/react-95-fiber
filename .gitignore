@@ -1,0 +1,7 @@
+node_modules
+devc++
+*.exe
+*.o
+nano_root
+.DS_Store
+*.img
