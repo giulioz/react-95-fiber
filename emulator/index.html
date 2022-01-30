@@ -52,8 +52,6 @@
         evaluateCommand(buffer);
         buffer = "";
       }
-      // HACK to reenable interrupts
-      emulator.v86.cpu.devices.uart0.ThrowInterrupt(2);
     });
 
     window.emulator = emulator;
