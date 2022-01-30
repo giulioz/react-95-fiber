@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8" />
+</head>
+
+<script src="v86/libv86.js"></script>
+<script>
+  let ready = false;
+
+  window.onload = () => {
+    const container = document.getElementById("screen_container");
+    const rect = container.getBoundingClientRect();
+
+    const emulator = new V86Starter({
+      screen_container: container,
+
+      wasm_path: "v86/v86.wasm",
+      bios: { url: "v86/seabios.bin" },
+      vga_bios: { url: "v86/vgabios.bin" },
+      hda: { url: "../test95/95.img" },
+      boot_order: 132,
+      // memory_size: 32 * 1024 * 1024,
+      disable_mouse: true,
+      // disable_keyboard: true,
+      autostart: true,
+      // log_level: 0x004000,
+    });
+
+    let mousePos = [0, 0];
+    setInterval(() => {
+      if (!ready) return;
+      emulator.serial0_send(`mp|${mousePos[0]}|${mousePos[1]}\r`);
+    }, 20);
+
+    container.addEventListener("mousemove", (e) => {
+      mousePos = [e.clientX - rect.x, e.clientY - rect.y];
+    });
+    container.addEventListener("mousedown", (e) => {
+      if (!ready) return;
+      emulator.serial0_send(`me|2\r`);
+    });
+    container.addEventListener("mouseup", (e) => {
+      if (!ready) return;
+      emulator.serial0_send(`me|4\r`);
+    });
+
+    let buffer = "";
+    emulator.add_listener("serial0-output-char", (char) => {
+      if (char !== "\r") {
+        buffer += char;
+      } else {
+        evaluateCommand(buffer);
+        buffer = "";
+      }
+      // HACK to reenable interrupts
+      emulator.v86.cpu.devices.uart0.ThrowInterrupt(2);
+    });
+
+    window.emulator = emulator;
+  };
+
+  function evaluateCommand(str) {
+    console.log(str);
+    if (str.endsWith("READY")) {
+      emulator.screen_set_scale(0.5, 0.5);
+      ready = true;
+    }
+  }
+
+  function setWindowSize(id, x, y, w, h) {
+    emulator.serial0_send(`setWSize|${id}|${x}|${y}|${w}|${h}\r`);
+  }
+  function addChildWindow(id, type, text, x, y, w, h, eventId) {
+    emulator.serial0_send(
+      `addChildW|${id}|${type}|${text}|${x}|${y}|${w}|${h}|${eventId}\r`
+    );
+  }
+  function setWindowText(id, text) {
+    emulator.serial0_send(`setWText|${id}|${text}\r`);
+  }
+</script>
+
+<div id="screen_container">
+  <div style="white-space: pre; font: 14px monospace; line-height: 14px"></div>
+  <canvas style="display: none"></canvas>
+</div>
