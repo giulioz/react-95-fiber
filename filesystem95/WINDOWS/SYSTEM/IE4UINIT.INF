@@ -1,0 +1,410 @@
+
+[version]
+signature="$CHICAGO$"
+AdvancedINF=2.0
+
+[RemoveDesktopIcon]
+DelReg=DelReg.DesktopIcon
+
+[RedistIE.Win]
+CustomDestination=MSIExploreDestinationSecWin
+
+UpdateInis=RemoveBrowser.Links,RemoveChannelBand.Links
+DelFiles=DelChannelBandLinks,DelAccessAptiva
+
+
+
+
+[RedistIE.NT]
+CustomDestination=MSIExploreDestinationSection
+
+UpdateInis=RemoveBrowser.Links,RemoveChannelBand.Links
+DelFiles=DelChannelBandLinks
+
+
+
+
+[DelReg.DesktopIcon]
+HKLM,"Software\Microsoft\Windows\CurrentVersion\Explorer\Desktop\NameSpace\{FBF23B42-E3F0-101B-8488-00AA003E56F8}"
+
+[DefaultInstall]
+ComponentName="IE UserData"
+CustomDestination=MSIExploreDestinationSecWin
+
+UpdateInis=AddBrowser.Links,AddChannelBand.Links,CleanUpOldChannelBar.Links,CleanUpOldWelcome.Links,CleanUpWelcome.Links
+DelFiles=DelOldBrowserLink,DelChannelBandLinks,DelAccessAptiva
+
+
+
+
+RegisterOCXs=MSIE4RegisterOCX
+AddReg=AddReg.International, AddReg.IEMain, AddReg.IEOther, AddReg.InetSettings, AddReg.Misc
+DelReg=Remove.Reg
+BackupReg=UserRegBackup
+PreRollBack=UserDataUninstall.Win
+RunPostSetupCommands=SetReg:1
+
+[DefaultInstall.NT]
+ComponentName="IE UserData NT"
+CustomDestination=MSIExploreDestinationSection
+
+UpdateInis=AddBrowser.Links,AddChannelBand.Links.NT,CleanUpOldChannelBar.Links,CleanUpOldWelcome.Links,CleanUpWelcome.Links
+DelFiles=DelOldBrowserLink,DelChannelBandLinks
+
+
+
+
+RegisterOCXs=MSIE4RegisterOCX
+AddReg=AddReg.International, AddReg.IEMain, AddReg.IEOther, AddReg.InetSettings, AddReg.Misc
+DelReg=Remove.Reg
+BackupReg=UserRegBackup
+PreRollBack=UserDataUninstall.NT
+RunPostSetupCommands=SetReg:1
+
+[OverrideHomePage.NT]
+ComponentName="IE UserData NT"
+AddReg=AddReg.HomePage.Clobber
+
+[MSIE4RegisterOCX]
+%11%\wininet.dll,NI,HKCU
+%11%\urlmon.dll,NI,HKCU
+%11%\initpki.dll,NI,U
+%11%\mshtml.dll,NI,U
+
+[UserDataUninstall.Win]
+RequiredEngine=Setupapi,%BadSetupVer%
+CustomDestination=MSIExploreDestinationSecWin
+RunPostSetupCommands=DirCleanup
+
+UpdateInis=RemoveBrowser.Links,RemoveChannelBand.Links
+
+
+
+
+[UserDataUninstall.NT]
+CustomDestination=MSIExploreDestinationSection
+RunPostSetupCommands=DirCleanup
+
+UpdateInis=RemoveBrowser.Links,RemoveChannelBand.Links
+
+
+
+
+[UserRegBackup]
+HKCU,"Software\Microsoft\Windows\CurrentVersion\Internet Settings","AllowCookies"
+HKCU,"Software\Microsoft\Windows\CurrentVersion\WinTrust\Trust Providers\Software Publishing","State"
+HKCU,"Software\Microsoft\Internet Explorer\Toolbar","BrandBitmap"
+HKCU,"Software\Microsoft\Internet Explorer\Toolbar","SmBrandBitmap"
+HKCU,"Software\Microsoft\Internet Explorer\Toolbar","BackBitmap"
+
+[MSIExploreDestinationSection]
+49000=MSIExploreLDIDSection,5
+49050=QuickLinksLDIDSection,5
+49060=OldIELinksLDIDSection,5
+
+49070=DesktopLDIDSection,5
+49080=StartUpLDIDSection,5
+
+49090=FavoriteLDIDSection,5
+
+[MSIExploreDestinationSecWin]
+49000,49010,49020,49030=MSIExploreLDIDSection,5
+49050=QuickLinksLDIDSection,5
+49060=OldIELinksLDIDSection,5
+49090=FavoriteLDIDSection,5
+
+49070=DesktopLDIDSection,5
+49080=StartUpLDIDSection,5
+
+[StartUpLDIDSection]
+"HKCU","SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders","StartUp","Internet Explorer 4.0","%25%\Start Menu\Programs\StartUp"
+
+[DesktopLDIDSection]
+"HKCU","SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders","Desktop","Internet Explorer 4.0","%25%\Desktop"
+
+
+[MSIExploreLDIDSection]
+"HKLM","SOFTWARE\Microsoft\IE4\Setup","Path","Internet Explorer 4.0","%24%\%PROGRAMF%"
+
+[QuickLinksLDIDSection]
+"HKCU","SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders","AppData","Internet Explorer 4.0","%25%\Application Data"
+
+[OldIELinksLDIDSection]
+"HKCU","SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders","Programs","Internet Explorer 4.0","%25%\Start Menu\Programs"
+
+[FavoriteLDIDSection]
+"HKCU","SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders","Favorites","Internet Explorer 4.0","%25%\Favorites"
+
+[DestinationDirs]
+DelOldBrowserLink       = 49060,%BROWSER_LINK%
+DelAccessAptiva         = 49080
+DelExplorer.lnk         = 49060
+DelNTExplorer.lnk       = 49060
+QuickLaunch.Files       = 49050,Microsoft\Internet Explorer\%QUICK_LAUNCH%
+
+DelChannelBandLinks     = 49080
+
+
+[AddBrowser.Links]
+setup.ini, progman.groups,,"IE_INTERNET=%Browser_suite%"
+setup.ini, IE_INTERNET,, """%SHORTCUT_IEXPLORE%"", """"""%49000%\iexplore.exe"""""""
+
+
+[AddChannelBand.Links]
+setup.ini, progman.groups,,"IE_INTERNET=%Browser_suite%"
+setup.ini, IE_INTERNET,, """%SHORTCUT_CHANNEL%"", ""%49000%\iexplore.exe -channelband"",,"
+
+[AddChannelBand.Links.NT]
+setup.ini, progman.groups,,"IE_INTERNET=%Browser_suite%"
+setup.ini, IE_INTERNET,, """%SHORTCUT_CHANNEL%"", """"""%49000%\iexplore.exe""""""" ""-channelband"""",,"
+
+[RemoveChannelBand.Links]
+setup.ini, progman.groups,,"IE_INTERNET=%Browser_suite%"
+setup.ini, IE_INTERNET,, """%SHORTCUT_CHANNEL%"""
+
+[CleanupOldChannelBar.Links]
+setup.ini, progman.groups,,"IE_CHANNELPROG=%49000%"
+setup.ini, IE_CHANNELPROG,, """%SHORTCUT_OLD_CHANNEL%"""
+
+setup.ini, progman.groups,,"IE_CHANNELPROG=%49000%"
+setup.ini, IE_CHANNELPROG,, """%SHORTCUT_CHANNEL%"""
+
+[CleanUpWelcome.Links]
+setup.ini, progman.groups,,"IE_WELCOME=%49070%"
+setup.ini, IE_WELCOME,, """%SHORTCUT_WELCOME%"""
+
+[CleanUpOldWelcome.Links]
+setup.ini, progman.groups,,"IE_WELCOME=%49070%"
+setup.ini, IE_WELCOME,, """%SHORTCUT_OLD_WELCOME%"""
+
+[DelChannelBandLinks]
+%SHORTCUT_CHANNEL%.lnk
+%SHORTCUT_OLD_CHANNEL%.lnk
+
+
+[RemoveBrowser.Links]
+setup.ini, progman.groups,,"IE_INTERNET=%Browser_suite%"
+setup.ini, IE_INTERNET,, """%SHORTCUT_IEXPLORE%"""
+
+[DelAccessAptiva]
+%AccessAptivaLnk%
+
+[SetReg]
+%11%\iesetreg.exe 2 TRUE 3 FALSE 4 FALSE 5 TRUE 6 FALSE 7 TRUE 9 FALSE
+
+[DirCleanup]
+rundll32.exe advpack.dll,DelNodeRunDLL32 %49090%\%CHANNELS%
+rundll32.exe advpack.dll,DelNodeRunDLL32 %49090%\%SOFTWARE_UPDATES%
+rundll32.exe advpack.dll,DelNodeRunDLL32 %49090%\%LINKS%
+rundll32.exe advpack.dll,DelNodeRunDLL32 %49050%\Microsoft\Internet Explorer\%QUICK_LAUNCH%
+
+[AddReg.International]
+HKCU,"SOFTWARE\Microsoft\Internet Explorer\International\1250","IEFixedFontName",2,"Courier New"
+HKCU,"SOFTWARE\Microsoft\Internet Explorer\International\1250","IEPropFontName",2,"Times New Roman"
+HKCU,"SOFTWARE\Microsoft\Internet Explorer\International\1250","Script",2,"%CENTRAL_EUROPEAN%"
+HKCU,"SOFTWARE\Microsoft\Internet Explorer\International\1251","IEFixedFontName",2,"Courier New"
+HKCU,"SOFTWARE\Microsoft\Internet Explorer\International\1251","IEPropFontName",2,"Times New Roman"
+HKCU,"SOFTWARE\Microsoft\Internet Explorer\International\1251","Script",2,"%CYRILLIC%"
+HKCU,"SOFTWARE\Microsoft\Internet Explorer\International\1252","IEFixedFontName",2,"Courier New"
+HKCU,"SOFTWARE\Microsoft\Internet Explorer\International\1252","IEPropFontName",2,"Times New Roman"
+HKCU,"SOFTWARE\Microsoft\Internet Explorer\International\1252","Script",2,"%WESTERN%"
+HKCU,"SOFTWARE\Microsoft\Internet Explorer\International\1253","IEFixedFontName",2,"Courier New"
+HKCU,"SOFTWARE\Microsoft\Internet Explorer\International\1253","IEPropFontName",2,"Times New Roman"
+HKCU,"SOFTWARE\Microsoft\Internet Explorer\International\1253","Script",2,"%GREEK%"
+
+[AddReg.IEMain]
+HKCU,"SOFTWARE\Microsoft\Internet Explorer\Main","Anchor Underline",2,"yes"
+HKCU,"SOFTWARE\Microsoft\Internet Explorer\Main","Cache_Update_Frequency",2,"Once_Per_Session"
+HKCU,"SOFTWARE\Microsoft\Internet Explorer\Main","Display Inline Images",2,"yes"
+HKCU,"SOFTWARE\Microsoft\Internet Explorer\Main","Do404Search",3,1,0,0,0                  ;this should be a dword value
+HKCU,"SOFTWARE\Microsoft\Internet Explorer\Main","Local Page",,"%11%\blank.htm"
+HKCU,"SOFTWARE\Microsoft\Internet Explorer\Main","Save_Session_History_On_Exit",,"no"
+HKCU,"SOFTWARE\Microsoft\Internet Explorer\Main","Search Page",2,"%SEARCH_PAGE%"
+HKCU,"SOFTWARE\Microsoft\Internet Explorer\Main","Show_FullURL",2,"no"
+HKCU,"SOFTWARE\Microsoft\Internet Explorer\Main","Show_StatusBar",2,"yes"
+HKCU,"SOFTWARE\Microsoft\Internet Explorer\Main","Show_ToolBar",2,"yes"
+HKCU,"SOFTWARE\Microsoft\Internet Explorer\Main","Show_URLinStatusBar",2,"yes"
+HKCU,"SOFTWARE\Microsoft\Internet Explorer\Main","Show_URLToolBar",2,"yes"
+HKCU,"SOFTWARE\Microsoft\Internet Explorer\Main","Start Page",2,"%START_PAGE%"
+HKCU,"SOFTWARE\Microsoft\Internet Explorer\Main","Use_DlgBox_Colors",2,"yes"
+
+[AddReg.HomePage.Clobber]
+HKCU,"SOFTWARE\Microsoft\Internet Explorer\Main","Start Page",,"%START_PAGE%"
+
+[AddReg.IEOther]
+HKCU,"SOFTWARE\Microsoft\Internet Explorer\SearchUrl","",2,"%GOSEARCH_PAGE%"
+HKCU,"SOFTWARE\Microsoft\Internet Explorer\SearchUrl"," ",2,"+"
+HKCU,"SOFTWARE\Microsoft\Internet Explorer\SearchUrl","&",,"%%26"
+HKCU,"SOFTWARE\Microsoft\Internet Explorer\SearchUrl","+",,"%%2B"
+HKCU,"SOFTWARE\Microsoft\Internet Explorer\SearchUrl","#",,"%%23"
+HKCU,"SOFTWARE\Microsoft\Internet Explorer\SearchUrl","?",,"%%3F"
+HKCU,"SOFTWARE\Microsoft\Internet Explorer\SearchUrl","=",,"%%3D"
+HKCU,"SOFTWARE\Microsoft\Internet Explorer\Security","Sending_Security",2,"Medium"
+HKCU,"SOFTWARE\Microsoft\Internet Explorer\Security","Viewing_Security",2,"Low"
+HKCU,"SOFTWARE\Microsoft\Internet Explorer\Services","",2,""
+HKCU,"SOFTWARE\Microsoft\Internet Explorer\Settings","Anchor Color Visited",2,"128,0,128"
+HKCU,"SOFTWARE\Microsoft\Internet Explorer\Settings","Anchor Color",2,"0,0,255"
+HKCU,"SOFTWARE\Microsoft\Internet Explorer\Settings","Background Color",2,"192,192,192"
+HKCU,"SOFTWARE\Microsoft\Internet Explorer\Settings","Text Color",2,"0,0,0"
+HKCU,"SOFTWARE\Microsoft\Internet Explorer\Settings","Use Anchor Hover Color",2,"No"
+HKCU,"SOFTWARE\Microsoft\Internet Explorer\Styles","Default_Style_Sheet",2,"SerifMedium"
+HKCU,"SOFTWARE\Microsoft\Internet Explorer\TypedURLs","url1",2,"%START_PAGE%"
+HKCU,"SOFTWARE\Microsoft\Internet Explorer\URLSearchHooks","{CFBFAE00-17A6-11D0-99CB-00C04FD64497}",,""
+
+[AddReg.InetSettings]
+HKCU,"SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings", "EmailName",2,"IE40user@"
+HKCU,"SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings","AutoConfigProxy",,"wininet.dll"
+HKCU,"SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings","MimeExclusionListForCache",,"multipart/mixed multipart/x-mixed-replace multipart/x-byteranges "
+HKCU,"SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings","Trust Warning Level",2,"High"
+HKCU,"SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings",,"WarnOnPost",1,1,0,0,0
+HKCU,"SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings","DisconnectIdleTime",1,14,00,00,00
+HKCU,"SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings","EnableAutodisconnect",1,01,00,00,00
+HKCU,"SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings","EnableSecurityCheck",1,01,00,00,00
+HKCU,"SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings","FtpDefaultExpiryTimeSecs",1,80,51,01,00
+HKCU,"SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings","GopherDefaultExpiryTimeSecs",1,80,51,01,00
+HKCU,"SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings","HttpDefaultExpiryTimeSecs",1,C0,A8,00,00
+HKCU,"SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings","SyncMode",1,02,00,00,00
+HKCU,"SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings","UseSchannelDirectly",1,01,00,00,00
+HKCU,"SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings","EnableHttp1_1",65537,1
+
+[AddReg.Misc]
+;document window settings
+HKCU,"SOFTWARE\Microsoft\Internet Explorer\Document Windows","Maximized",2,"no"
+HKCU,"Software\Microsoft\Internet Explorer\Document Windows","height",3,00,00,00,00
+HKCU,"Software\Microsoft\Internet Explorer\Document Windows","width",3,00,00,00,80
+HKCU,"Software\Microsoft\Internet Explorer\Document Windows","x",3,00,00,00,80
+HKCU,"Software\Microsoft\Internet Explorer\Document Windows","y",3,00,00,00,00
+
+HKCU,"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\NewShortcutHandlers","{FBF23B40-E3F0-101B-8488-00AA003E56F8}",,""
+HKCU,"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders","Favorites",2,"%25%\%FAVORITES_DIR%"
+; Sound Events for Browser
+HKCU,"AppEvents\Schemes\Apps\Explorer\ActivatingDocument",,,
+HKCU,"AppEvents\Schemes\Apps\Explorer\Navigating",,,
+HKCU,"AppEvents\Schemes\Apps\Explorer\MoveMenuItem",,,
+HKCU,"AppEvents\EventLabels\ActivatingDocument",,,"%SND_NAVIGATEEND%"
+HKCU,"AppEvents\EventLabels\Navigating",,,"%SND_NAVIGATESTART%"
+HKCU,"AppEvents\EventLabels\MoveMenuItem",,,"%SND_MOVEMENUITEM%"
+; Sound Events for Comctl32
+HKCU,"AppEvents\Schemes\Apps\.Default\CCSelect",,,
+HKCU,"AppEvents\Schemes\Apps\.Default\ShowBand",,,
+HKCU,"AppEvents\EventLabels\CCSelect",,,"%SND_SELECT%"
+HKCU,"AppEvents\EventLabels\ShowBand",,,"%SND_SHOWBAND%"
+; make sure DragFullWindows is off, use no clobber to keep previous
+HKCU,"Control Panel\Desktop","DragFullWindows",2,"0"
+
+[Remove.Reg]
+HKCU,"SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings","WarnAlwaysOnPost"
+HKCU,"SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings","HeaderExclusionListForCache"
+
+;--------------- shell mode per user stub --------------------------------------------
+;                                                                                    |
+[Shell.UserStub]
+CustomDestination=MSIExploreDestinationSecWin
+DelFiles=DelExplorer.lnk
+AddReg=Addreg.Aptiva
+ComponentName=IE4Shell95UserData
+UpdateInis=AddExplorer.Links,AddQuick.Links,RemoveChannelBand.Links
+CopyFiles=QuickLaunch.Files
+PreRollBack=Shell.UserStub.Uninstall
+
+[Shell.UserStubNT]
+CustomDestination=MSIExploreDestinationSection
+
+PreRollBack=Shell.UserStub.Uninstall.NT
+UpdateInis=AddNTExplorer.Links,AddQuick.Links,RemoveChannelBand.Links
+AddReg=Addreg.Aptiva
+
+
+
+DelFiles=DelNTExplorer.lnk
+ComponentName=IE4ShellntUserData
+CopyFiles=QuickLaunch.Files
+
+[Shell.UserStub.Uninstall]
+CustomDestination=Shell.UserDestination
+UpdateInis=AddChannelBand.Links
+
+[Shell.UserStub.Uninstall.NT]
+CustomDestination=Shell.UserDestination.NT
+UpdateInis=AddChannelBand.Links.NT
+
+[Shell.UserDestination]
+49000,49010,49020,49030=MSIExploreLDIDSection,5
+49080=StartUpLDIDSection,5
+
+[Shell.UserDestination.NT]
+49000=MSIExploreLDIDSection,5
+49080=StartUpLDIDSection,5
+
+[QuickLaunch.Files]
+%FILE_DESKTOP%
+%FILE_CHANNELS%
+
+[DelExplorer.lnk]
+%SHORTCUT_EXPLORER%.lnk
+
+[DelNTExplorer.lnk]
+%SHORTCUT_NTEXPLORER%.lnk
+
+[AddExplorer.Links]
+setup.ini, progman.groups,,"EXPLORER_LNK="
+setup.ini, EXPLORER_LNK,, """%SHORTCUT_EXPLORER%"", """"""%25%\explorer.scf"""""""
+
+[AddNTExplorer.Links]
+setup.ini, progman.groups,,"EXPLORER_LNK="
+setup.ini, EXPLORER_LNK,, """%SHORTCUT_NTEXPLORER%"", """"""%25%\explorer.scf"""""""
+
+[AddQuick.Links]
+setup.ini, progman.groups,,"IE_WEBVIEW=""%49050%\Microsoft\Internet Explorer\%QUICK_LAUNCH%"""
+setup.ini, IE_WEBVIEW,, """%SHORTCUT_QUICK_IEXPLORE%"", """"""%49000%\IEXPLORE.EXE"""""",,,,,%SHORTCUT_IEXPLORE%"
+
+[Addreg.Aptiva.IBM]
+HKCU,"SOFTWARE\IBM\Aptiva Desktop Enhancements","Icon Animation",65537,00
+HKCU,"SOFTWARE\IBM\Aptiva Desktop Enhancements","LaunchFx",65537,00
+;                                                                                    |
+;--------------- shell mode per user stub --------------------------------------------
+
+[Strings]
+PROGRAMF                  = "Program Files"
+SHORTCUT_IEXPLORE         = "Internet Explorer"
+SHORTCUT_QUICK_IEXPLORE   = "Launch Internet Explorer Browser"
+SHORTCUT_CHANNEL          = "Channel Bar" ; Name of channel bar launching link
+SHORTCUT_OLD_CHANNEL      = "chanbar" ; name of old links for cleanup
+SHORTCUT_WELCOME          = "Welcome to IE 4.0"
+SHORTCUT_OLD_WELCOME      = "Welcome to Internet Explorer 4.0"
+SHORTCUT_EXPLORER         = "Windows Explorer"
+SHORTCUT_NTEXPLORER       = "Windows NT Explorer"
+BadSetupVer               = "Your system is missing the required Setup engine."
+KEY_PROGRAM_FILES         = "SOFTWARE\Microsoft\Windows\CurrentVersion"
+Browser_suite             = "Internet Explorer"
+BROWSER_LINK              = "Internet Explorer.lnk"
+QUICK_LAUNCH              = "Quick Launch"
+;files
+FILE_DESKTOP              = "Show Desktop.scf"
+FILE_CHANNELS             = "View Channels.scf"
+SOFTWARE_UPDATES          = "Software Updates"
+CHANNELS                  = "Channels"
+LINKS                     = "Links"
+
+;international
+CENTRAL_EUROPEAN          = "Central European"
+CYRILLIC                  = "Cyrillic"
+WESTERN                   = "Western"
+GREEK                     = "Greek"
+AccessAptivaLnk           = "Access Aptiva.lnk"
+
+REG_DWORD_NOCLOBBER       = "0x00010003"
+REG_DWORD_CLOBBER         = "0x00010001"
+
+;navigation
+START_PAGE                = "http://home.microsoft.com"
+SEARCH_PAGE               = "http://home.microsoft.com/access/allinone.asp"
+GOSEARCH_PAGE             = "http://home.microsoft.com/access/autosearch.asp?p=%s"
+
+;sound events
+SND_NAVIGATESTART       = "Start Navigation"
+SND_NAVIGATEEND         = "Complete Navigation"
+SND_MOVEMENUITEM        = "Move Menu Item"
+SND_SELECT              = "Select"
+SND_SHOWBAND            = "Show Toolbar Band"
+
