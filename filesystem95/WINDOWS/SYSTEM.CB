@@ -1,8 +1,0 @@
-[Keyboard]
-layout=kbdus.kbd
-
-[Intl]
-ACP=1252
-OEMCP=437
-SystemLocale=00000409
-
