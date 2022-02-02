@@ -28,3 +28,6 @@ for f in ../filesystem95/*;
 do
   mcopy -i os.img@@32256 -s "$f" ::/;
 done
+
+# mcopy -i os.img@@32256 ::/WINDOWS/SYSTEM.DAT ../filesystem95/WINDOWS/SYSTEM.DAT
+# mcopy -i os.img@@32256 ::/WINDOWS/USER.DAT ../filesystem95/WINDOWS/USER.DAT
