@@ -4235,47 +4235,540 @@ REGEDIT4
 
 [HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services]
 
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class]
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\Adapter]
+@="CD-ROM controllers"
+"Icon"="-9"
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\Printer]
+@="Printer"
+"Installer"="MSPRINT.DLL"
+"Icon"="-4"
+"NoDisplayClass"="1"
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\DiskDrive]
+@="Disk drives"
+"EnumPropPages"="iosclass.dll,EnumPropPages"
+"SilentInstall"="1"
+"NoInstallClass"="1"
+"Icon"="3"
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\DiskDrive\0000]
+"NoSetupUI"="1"
+"InfPath"="DISKDRV.INF"
+"InfSection"="GenDiskInstall"
+"DriverDate"=" 8-24-1996"
+"DriverDesc"="Disk drive"
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\DiskDrive\0001]
+"NoSetupUI"="1"
+"InfPath"="DISKDRV.INF"
+"InfSection"="GenDiskInstall"
+"DriverDate"=" 8-24-1996"
+"DriverDesc"="Disk drive"
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\GPS]
+@="Global positioning devices"
+"Icon"="-22"
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\Infrared]
+@="Infrared"
+"Installer"="infrared.dll"
+"Icon"="0"
+"SilentInstall"="1"
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\MEDIA]
+@="Sound, video and game controllers"
+"Icon"="0"
+"Installer"="mmci.dll"
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\Keyboard]
+@="Keyboard"
+"Icon"="-3"
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\Keyboard\0000]
+"InfPath"="keyboard.inf"
+"InfSection"="PC_AT_Enh_Inst"
+"DriverDate"=" 8-24-1996"
+"DriverDesc"="Standard 101/102-Key or Microsoft Natural Keyboard"
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\System]
+@="System devices"
+"Installer"="sysclass.dll"
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\System\0000]
+"EnumPropPages"="sysclass.dll,EnumPropPages"
+"InfPath"="MACHINE.INF"
+"InfSection"="VPIC_DRV"
+"DriverDate"=" 8-24-1996"
+"DriverDesc"="Programmable interrupt controller"
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\System\0001]
+"DevLoader"="*VDMAD"
+"PrivateProblem"="DMAProblemHandler"
+"EnumPropPages"="sysclass.dll,DMAEnumPropPages"
+"InfPath"="MACHINE.INF"
+"InfSection"="VDMA_DRV"
+"DriverDate"=" 8-24-1996"
+"DriverDesc"="Direct memory access controller"
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\System\0002]
+"DevLoader"="*CONFIGMG"
+"EnumPropPages"="sysclass.dll,EnumPropPages"
+"InfPath"="MACHINE.INF"
+"InfSection"="DUMMY_DRV"
+"DriverDate"=" 8-24-1996"
+"DriverDesc"="System CMOS/real time clock"
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\System\0003]
+"DevLoader"="*CONFIGMG"
+"EnumPropPages"="sysclass.dll,EnumPropPages"
+"InfPath"="MACHINE.INF"
+"InfSection"="TIMER_DRV"
+"DriverDate"=" 8-24-1996"
+"DriverDesc"="System timer"
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\System\0004]
+"DevLoader"="*CONFIGMG"
+"EnumPropPages"="sysclass.dll,EnumPropPages"
+"InfPath"="MACHINE.INF"
+"InfSection"="DUMMY_DRV"
+"DriverDate"=" 8-24-1996"
+"DriverDesc"="System speaker"
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\System\0005]
+"DevLoader"="*CONFIGMG"
+"EnumPropPages"="sysclass.dll,FPUEnumPropPages"
+"InfPath"="MACHINE.INF"
+"InfSection"="FPU_DRV"
+"DriverDate"=" 8-24-1996"
+"DriverDesc"="Numeric data processor"
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\System\0006]
+"EnumPropPages"="sysclass.dll,EnumPropPages"
+"DevLoader"="*CONFIGMG"
+"CMDrivFlags"=hex:02
+"InfPath"="MACHINE.INF"
+"InfSection"="SYSTEM_BOARD"
+"DriverDate"=" 8-24-1996"
+"DriverDesc"="System board"
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\System\0007]
+"DevLoader"="*bios"
+"EnumPropPages"="sysclass.dll,BIOSEnumPropPages"
+"InfPath"="MACHINE.INF"
+"InfSection"="PNPBIOS_DRV"
+"DriverDate"=" 8-24-1996"
+"DriverDesc"="Plug and Play BIOS"
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\System\0008]
+"EnumPropPages"="sysclass.dll,EnumPropPages"
+"InfPath"="MACHINE.INF"
+"InfSection"="APM_DRV"
+"DriverDate"=" 8-24-1996"
+"DriverDesc"="Advanced Power Management support"
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\MultiFunction]
+@="Multi-function adapters"
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\Modem]
+@="Modem"
+"Installer"="Modem.Cpl"
+"Icon"="0"
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\Monitor]
+@="Monitor"
+"Icon"="-1"
+"NoInstallClass"="1"
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\Monitor\0000]
+"InfPath"="monitor.inf"
+"InfSection"="Unknown.Install"
+"DriverDate"=" 8-24-1996"
+"DriverDesc"="(Unknown Monitor)"
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\Monitor\0000\MODES]
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\Monitor\0000\MODES\640,480]
+@=""
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\Monitor\0001]
+"MaxResolution"="1600,1200"
+"DPMS"="1"
+"InfPath"="MONITOR.INF"
+"InfSection"="VESADDC.Install"
+"DriverDate"=" 8-24-1996"
+"DriverDesc"="Plug and Play Monitor"
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\Monitor\0001\MODES]
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\Monitor\0001\MODES\1600,1200]
+@=""
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\CDROM]
+@="CDROM"
+"EnumPropPages"="iosclass.dll,EnumPropPages"
+"SilentInstall"="1"
+"NOInstallClass"="1"
+"Installer"="IOSClass.Dll,CDROMClassInstall"
+"Icon"="2"
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\CDROM\0000]
+"NoSetupUI"="1"
+"InfPath"="MSCDROM.INF"
+"InfSection"="GenCDInstall"
+"DriverDate"=" 8-24-1996"
+"DriverDesc"="CD-Rom Drive"
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\Display]
+@="Display adapters"
+"Installer"="SetupX.Dll, Display_ClassInstaller"
+"Icon"="-1"
+"EnumDriverStack"="enumfile.dll,EnumDisplayDriverStack"
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\Display\0000]
+"Ver"="4.0"
+"DevLoader"="*vdd"
+"InfPath"="msdisp.inf"
+"InfSection"="VGA"
+"DriverDate"=" 8-24-1996"
+"DriverDesc"="Standard Display Adapter (VGA)"
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\Display\0000\DEFAULT]
+"Mode"="4,640,480"
+"drv"="vga.drv"
+"vdd"="*vdd"
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\Display\0000\MODES]
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\Display\0000\MODES\1]
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\Display\0000\MODES\1\640,480]
+"drv"="framebuf.drv"
+"vdd"="*vdd,*vflatd"
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\Display\0000\MODES\4]
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\Display\0000\MODES\4\640,480]
+@=""
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\fdc]
+@="Floppy disk controllers"
+"Icon"="-9"
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\fdc\0000]
+"DevLoader"="*IOS"
+"PortDriver"="HSFLOP.pdr"
+"InfPath"="MSFDC.INF"
+"InfSection"="MS_FDC_Inst"
+"DriverDate"=" 8-24-1996"
+"DriverDesc"="Standard Floppy Disk Controller"
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\hdc]
+@="Hard disk controllers"
+"Icon"="-9"
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\hdc\0000]
+"DriverDesc"="Standard IDE/ESDI Hard Disk Controller"
+"DevLoader"="*IOS"
+"PortDriver"="ESDI_506.pdr"
+"InfPath"="MSHDC.INF"
+"InfSection"="BAD_IDE"
+"DriverDate"=" 8-24-1996"
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\hdc\0001]
+"DriverDesc"="Standard IDE/ESDI Hard Disk Controller"
+"DevLoader"="*IOS"
+"PortDriver"="ESDI_506.pdr"
+"InfPath"="MSHDC.INF"
+"InfSection"="BAD_IDE"
+"DriverDate"=" 8-24-1996"
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\Mouse]
+@="Mouse"
+"Installer"="SetupX.Dll, Mouse_ClassInstaller"
+"Icon"="-2"
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\Mouse\0000]
+"DevLoader"="*vmouse"
+"MouseType"="PS2"
+"NoSetupUI"="1"
+"InfPath"="msmouse.inf"
+"InfSection"="StdPS2"
+"DriverDate"=" 8-24-1996"
+"DriverDesc"="Standard PS/2 Port Mouse"
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\Ports]
+@="Ports (COM & LPT)"
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\Ports\0000]
+"DevLoader"="*vcomm"
+"Enumerator"="serenum.vxd"
+"PortDriver"="serial.vxd"
+"Contention"="*vcd"
+"ConfigDialog"="serialui.dll"
+"DCB"=hex:1c,00,00,00,80,25,00,00,11,33,00,00,00,00,0a,00,0a,00,08,00,00,11,13,\
+  00,00,00
+"PortSubClass"=hex:01
+"EnumPropPages"="serialui.dll,EnumPropPages"
+"InfPath"="MSPORTS.INF"
+"InfSection"="ComPort"
+"DriverDate"=" 8-24-1996"
+"DriverDesc"="Communications Port"
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\Ports\0001]
+"DevLoader"="*vcomm"
+"Enumerator"="lptenum.vxd"
+"Contention"="*vpd"
+"PortDriver"="lpt.vxd"
+"PortSubClass"=hex:00
+"ECPDevice"=hex:00
+"InfPath"="MSPORTS.INF"
+"InfSection"="LptPort"
+"DriverDate"=" 8-24-1996"
+"DriverDesc"="Printer Port"
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\MTD]
+@="Memory Technology Drivers (MTDs)"
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\Net]
+@="Network adapters"
+"Installer"="netdi.dll"
+"Icon"="-5"
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\NetTrans]
+@="Network Protocol"
+"Installer"="netdi.dll"
+"Icon"="-6"
+"NoUseClass"="1"
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\NetService]
+@="Network Service"
+"Installer"="netdi.dll"
+"Icon"="-8"
+"NoUseClass"="1"
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\NetClient]
+@="Network Client"
+"Installer"="netdi.dll"
+"Icon"="-7"
+"NoUseClass"="1"
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\nodriver]
+@="Other detected devices"
+"NoInstallClass"="1"
+"SilentInstall"="1"
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\PCMCIA]
+@="PCMCIA socket"
+"Installer"="MSPCIC.dll"
+"Icon"="0"
+"EnumPropPages"="MSPCIC.dll, EnumClassPropPages"
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\PrinterUpgrade]
+@="Printer Upgrades"
+"Installer"="MSPRINT.DLL"
+"Icon"="-4"
+"NoUseClass"="1"
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\SCSIAdapter]
+@="SCSI controllers"
+"EnumPropPages"="iosclass.dll,SCSIEnumPropPages"
+"Icon"="-10"
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\Unknown]
+@="Other devices"
+"Icon"="-18"
+
 [HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\VxD]
 
-[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\VxD\VMM]
-"VXDGroups"=hex:00,a0,25,c0,ff,ff,31,c0,50,43,4f,44,00,00,22,c0,00,10,22,c0,49,\
-  4e,54,32,00,10,22,c0,00,20,22,c0,4c,4f,43,4b,00,20,22,c0,00,30,22,c0,53,59,\
-  53,45,00,30,22,c0,00,f0,22,c0,52,41,52,45,00,f0,22,c0,00,20,23,c0,57,31,36,\
-  43,00,20,23,c0,00,30,23,c0,57,33,32,43,00,30,23,c0,00,70,23,c0,56,4d,43,52,\
-  00,70,23,c0,00,90,23,c0,56,4d,44,45,00,90,23,c0,00,a0,23,c0,54,48,43,52,00,\
-  a0,23,c0,00,b0,23,c0,54,48,44,45,00,b0,23,c0,00,c0,23,c0,56,4d,53,55,00,c0,\
-  23,c0,00,d0,23,c0,56,4d,52,45,00,d0,23,c0,00,30,24,c0,50,4e,50,43,00,30,24,\
-  c0,00,b0,24,c0,44,4f,53,56,00,b0,24,c0,00,c0,24,c0,43,4f,44,45,00,c0,24,c0,\
-  00,a0,25,c0,50,4e,50,00,00,a0,25,c0,00,a0,25,c0,00,00,00,00,00,a0,25,c0,00,\
-  a0,25,c0,00,00,00,00,00,a0,25,c0,00,a0,25,c0,00,00,00,00,00,a0,25,c0,00,a0,\
-  25,c0,00,00,00,00,00,a0,25,c0,00,a0,25,c0,00,00,00,00,00,a0,25,c0,00,a0,25,\
-  c0,00,00,00,00,00,a0,25,c0,00,a0,25,c0,00,00,00,00,00,a0,25,c0,00,a0,25,c0,\
-  00,00,00,00,00,a0,25,c0,00,a0,25,c0,00,00,00,00,00,a0,25,c0,00,a0,25,c0,00,\
-  00,00,00,00,a0,25,c0,00,a0,25,c0,00,00,00,00,00,a0,25,c0,00,a0,25,c0,00,00,\
-  00,00,00,a0,25,c0,00,a0,25,c0,00,00,00,00,00,a0,25,c0,00,a0,25,c0,00,00,00,\
-  00,00,a0,25,c0,00,a0,25,c0,00,00,00,00
-"DOSPager"=hex:01
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\VxD\IOS]
+"StaticVxD"="*IOS"
+"Start"=hex:00
 
-[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\VxD\VCache]
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\VxD\VPOWERD]
 
-[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\VxD\VCache\Lookup]
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\VxD\VNETSUP]
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\VxD\JAVASUP]
+"Start"="JAVASUP.VXD"
 
 [HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\VxD\CONFIGMG]
+"StaticVxD"="*CONFIGMG"
+"Start"=hex:00
+"SysDM"="SYSDM.CPL"
+"SysDMFunc"="DMSetupDevnode"
+"Detect"="SYSDM.CPL"
+"DetectFunc"="DMRedetect"
+"Private"="SYSDM.CPL"
+"PrivateFunc"="DMPrivateProblem"
+"RemoveRomOkay"="SYSDM.CPL"
+"RemoveRomOkayFunc"="DMRemoveRomOkay"
+"AskForConfig"="SYSDM.CPL"
+"AskForConfigFunc"="DMAskForConfig"
+"AskForUndock"="SYSDM.CPL"
+"AskForUndockFunc"="DMAskForUndock"
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\VxD\CONFIGMG\SpannableBus]
+"PCI"=hex:00
+"ISAPNP"=hex:00
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\VxD\VSHARE]
+"StaticVxD"="*VSHARE"
+"Start"=hex:00
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\VxD\VWIN32]
+"StaticVxD"="*VWIN32"
+"Start"=hex:00
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\VxD\VFBACKUP]
+"StaticVxD"="*VFBACKUP"
+"Start"=hex:00
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\VxD\VCOMM]
+"StaticVxD"="*VCOMM"
+"Start"=hex:00
+"EnablePowerManagement"=hex:01,00,00,00
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\VxD\COMBUFF]
+"StaticVxD"="*COMBUFF"
+"Start"=hex:00
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\VxD\IFSMGR]
+"StaticVxD"="*IFSMGR"
+"Start"=hex:00
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\VxD\SPOOLER]
+"StaticVxD"="*SPOOLER"
+"Start"=hex:00
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\VxD\VFAT]
+"StaticVxD"="*VFAT"
+"Start"=hex:00
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\VxD\VCACHE]
+"StaticVxD"="*VCACHE"
+"Start"=hex:00
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\VxD\VCACHE\Lookup]
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\VxD\VCOND]
+"StaticVxD"="*VCOND"
+"Start"=hex:00
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\VxD\VCDFSD]
+"StaticVxD"="*VCDFSD"
+"Start"=hex:00
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\VxD\VXDLDR]
+"StaticVxD"="*VXDLDR"
+"Start"=hex:00
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\VxD\VDEF]
+"StaticVxD"="*VDEF"
+"Start"=hex:00
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\VxD\VPICD]
+"StaticVxD"="*VPICD"
+"Start"=hex:00
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\VxD\VTD]
+"StaticVxD"="*VTD"
+"Start"=hex:00
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\VxD\REBOOT]
+"StaticVxD"="*REBOOT"
+"Start"=hex:00
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\VxD\VDMAD]
+"StaticVxD"="*VDMAD"
+"Start"=hex:00
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\VxD\VSD]
+"StaticVxD"="*VSD"
+"Start"=hex:00
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\VxD\V86MMGR]
+"StaticVxD"="*V86MMGR"
+"Start"=hex:00
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\VxD\PAGESWAP]
+"StaticVxD"="*PAGESWAP"
+"Start"=hex:00
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\VxD\DOSMGR]
+"StaticVxD"="*DOSMGR"
+"Start"=hex:00
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\VxD\VMPOLL]
+"StaticVxD"="*VMPOLL"
+"Start"=hex:00
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\VxD\SHELL]
+"StaticVxD"="*SHELL"
+"Start"=hex:00
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\VxD\PARITY]
+"StaticVxD"="*PARITY"
+"Start"=hex:00
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\VxD\BIOSXLAT]
+"StaticVxD"="*BIOSXLAT"
+"Start"=hex:00
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\VxD\VMCPD]
+"StaticVxD"="*VMCPD"
+"Start"=hex:00
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\VxD\VTDAPI]
+"StaticVxD"="*VTDAPI"
+"Start"=hex:00
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\VxD\PERF]
+"StaticVxD"="*PERF"
+"Start"=hex:00
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\VxD\BIOS]
+"StaticVxD"="*BIOS"
+"Start"=hex:00
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\VxD\VMM]
+"VXDGroups"=hex:00,e0,25,c0,ff,ff,31,c0,50,43,4f,44,00,00,22,c0,00,10,22,c0,49,\
+  4e,54,32,00,10,22,c0,00,20,22,c0,4c,4f,43,4b,00,20,22,c0,00,30,22,c0,53,59,\
+  53,45,00,30,22,c0,00,00,23,c0,52,41,52,45,00,00,23,c0,00,30,23,c0,57,31,36,\
+  43,00,30,23,c0,00,40,23,c0,57,33,32,43,00,40,23,c0,00,80,23,c0,56,4d,43,52,\
+  00,80,23,c0,00,a0,23,c0,56,4d,44,45,00,a0,23,c0,00,b0,23,c0,54,48,43,52,00,\
+  b0,23,c0,00,c0,23,c0,54,48,44,45,00,c0,23,c0,00,d0,23,c0,56,4d,53,55,00,d0,\
+  23,c0,00,e0,23,c0,56,4d,52,45,00,e0,23,c0,00,40,24,c0,50,4e,50,43,00,40,24,\
+  c0,00,c0,24,c0,44,4f,53,56,00,c0,24,c0,00,d0,25,c0,50,4e,50,00,00,d0,25,c0,\
+  00,e0,25,c0,43,4f,44,45,00,e0,25,c0,00,e0,25,c0,00,00,00,00,00,e0,25,c0,00,\
+  e0,25,c0,00,00,00,00,00,e0,25,c0,00,e0,25,c0,00,00,00,00,00,e0,25,c0,00,e0,\
+  25,c0,00,00,00,00,00,e0,25,c0,00,e0,25,c0,00,00,00,00,00,e0,25,c0,00,e0,25,\
+  c0,00,00,00,00,00,e0,25,c0,00,e0,25,c0,00,00,00,00,00,e0,25,c0,00,e0,25,c0,\
+  00,00,00,00,00,e0,25,c0,00,e0,25,c0,00,00,00,00,00,e0,25,c0,00,e0,25,c0,00,\
+  00,00,00,00,e0,25,c0,00,e0,25,c0,00,00,00,00,00,e0,25,c0,00,e0,25,c0,00,00,\
+  00,00,00,e0,25,c0,00,e0,25,c0,00,00,00,00,00,e0,25,c0,00,e0,25,c0,00,00,00,\
+  00,00,e0,25,c0,00,e0,25,c0,00,00,00,00
+"DOSPager"=hex:01
 
 [HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\VxD\VMD]
 
 [HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Arbitrators]
 
 [HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Arbitrators\AddrArb]
+"0000"="000A0000-000AFFFF,000B8000-000C99FF"
 
 [HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Arbitrators\IRQArb]
-"ReservedIRQMask"="72C7"
+"ReservedIRQMask"="71C7"
 
 [HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Arbitrators\DMAArb]
-"ReservedDMAMask"="04"
+"ReservedDMAMask"="14"
 
 [HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Arbitrators\IOArb]
-"0000"="0102,0378:037F,03C0:03DF,03F8:03FF"
+"0000"="0000:000F,0020:0021,0040:0043,0060:0061,0064,0070:0071,0081:0083"
+"0001"="0087,0089:008B,008F,00A0:00A1,00C0:00DF,00F0:00FF,0102,0170:0177"
+"0002"="01F0:01F7,0376,0378:037F,03B0:03BB,03C0:03DF,03F2:03F6,03F8:03FF"
 
 [HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control]
 
@@ -4623,6 +5116,32 @@ REGEDIT4
   0c,00,00,00,00,00,00,f0,ff,ff,00,80,00,00,00,00,0d,00,ff,7f,0d,00,00,00,00,\
   00,00,f0,ff,ff,00,60,00,00,00,00,0e,00,ff,5f,0e,00,00,00,00,00,00,f0,ff,ff,\
   00,80,00,00,00,00,0e,00,ff,7f,0e,00,00,00,00,00,00,00,00,00
+
+[HKEY_LOCAL_MACHINE\Enum\Root\*PNP0700]
+
+[HKEY_LOCAL_MACHINE\Enum\Root\*PNP0700\0000]
+"InfName"="MSFDC.INF"
+"DeviceDesc"="Standard Floppy Disk Controller"
+"Class"="fdc"
+"HardwareID"="*PNP0700"
+"DetFunc"="*:DETECTFLOPPY"
+"NoSetupUI"="1"
+"DetFlags"=hex:00,00,00,00
+"BootConfig"=hex:00,04,00,00,00,00,00,00,14,00,00,00,02,00,00,00,00,00,0c,00,\
+  f2,03,f5,03,00,00,00,03,10,00,00,00,04,00,00,00,00,00,06,00,00,00,00,00,0c,\
+  00,00,00,03,00,00,00,00,02,00,00,00,00,00,00
+"VerifyKey"=hex:f2,03,00,00
+"Driver"="fdc\\0000"
+"Mfg"="(Standard floppy disk controllers)"
+"ConfigFlags"=hex:00,00,00,00
+
+[HKEY_LOCAL_MACHINE\Enum\Root\*PNP0700\0000\LogConfig]
+"0"=hex:00,04,00,00,00,e0,00,00,20,00,00,00,02,00,00,00,01,00,0c,00,00,00,00,\
+  00,00,00,00,00,ff,ff,04,00,f2,03,f5,03,00,00,00,03,10,00,00,00,04,00,00,00,\
+  00,00,00,00,40,00,00,00,0c,00,00,00,03,00,00,00,00,00,04,00,00,00,00,00
+"1"=hex:00,04,00,00,00,e0,00,00,20,00,00,00,02,00,00,00,01,00,0c,00,00,00,00,\
+  00,00,00,00,00,ff,ff,04,00,72,03,75,03,00,00,00,03,10,00,00,00,04,00,00,00,\
+  00,00,00,00,40,00,00,00,0c,00,00,00,03,00,00,00,00,00,04,00,00,00,00,00
 
 [HKEY_LOCAL_MACHINE\Enum\Root\*PNP0500]
 
