@@ -3,6 +3,7 @@ devc++
 *.exe
 *.o
 nano_root
-.DS_Store
 *.img
 !small.img
+!filesystem95/**/*
+.DS_Store
