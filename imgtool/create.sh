@@ -3,7 +3,7 @@
 cd /mnt/imgtool
 
 rm os.img
-dd if=/dev/zero of=os.img bs=32K count=1600
+dd if=/dev/zero of=os.img bs=32K count=1156
 dd conv=notrunc if=clean_fat.img of=os.img
 
 # dd conv=notrunc if=mbr.img of=os.img
