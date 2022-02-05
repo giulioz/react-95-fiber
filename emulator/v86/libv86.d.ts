@@ -34,6 +34,9 @@ type V86StarterOptions = {
 declare class V86Starter {
   constructor(options: V86StarterOptions);
 
+  bus: any;
+  v86: any;
+
   serial0_send(data: string): void;
   add_listener<T extends keyof V86StarterEventParams>(
     event: T,

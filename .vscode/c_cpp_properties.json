@@ -4,11 +4,11 @@
       "name": "Mac",
       "includePath": [
         "${workspaceFolder}/bridge/**",
-        "${workspaceFolder}/../devc++/drive_c/Dev-Cpp/lib/gcc/mingw32/3.4.2/include",
-        "${workspaceFolder}/../devc++/drive_c/Dev-Cpp/include/c++/3.4.2/backward",
-        "${workspaceFolder}/../devc++/drive_c/Dev-Cpp/include/c++/3.4.2/mingw32",
-        "${workspaceFolder}/../devc++/drive_c/Dev-Cpp/include/c++/3.4.2",
-        "${workspaceFolder}/../devc++/drive_c/Dev-Cpp/include"
+        "${workspaceFolder}/devc++/drive_c/Dev-Cpp/lib/gcc/mingw32/3.4.2/include",
+        "${workspaceFolder}/devc++/drive_c/Dev-Cpp/include/c++/3.4.2/backward",
+        "${workspaceFolder}/devc++/drive_c/Dev-Cpp/include/c++/3.4.2/mingw32",
+        "${workspaceFolder}/devc++/drive_c/Dev-Cpp/include/c++/3.4.2",
+        "${workspaceFolder}/devc++/drive_c/Dev-Cpp/include"
       ],
       "defines": [],
       "macFrameworkPath": [],

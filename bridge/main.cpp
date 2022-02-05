@@ -13,46 +13,117 @@ const char *readyMsg = "READY\r";
 
 std::map<int, HWND> handles;
 
-std::vector<std::string> split(std::string s, std::string delimiter) {
-  size_t pos_start = 0, pos_end, delim_len = delimiter.length();
-  std::string token;
-  std::vector<std::string> res;
+enum DataType {
+  Null = 0,
+  Int = 1,
+  UInt = 2,
+  Float = 3,
+  String = 4,
+};
 
-  while ((pos_end = s.find(delimiter, pos_start)) != std::string::npos) {
-    token = s.substr(pos_start, pos_end - pos_start);
-    pos_start = pos_end + delim_len;
-    res.push_back(token);
+struct DataItemUint {
+  DataType type;
+  unsigned int value;
+};
+
+struct DataItemInt {
+  DataType type;
+  int value;
+};
+
+struct DataItemFloat {
+  DataType type;
+  float value;
+};
+
+struct DataItemString {
+  DataType type;
+  char *value;
+};
+
+union DataItem {
+  DataType type;
+  DataItemUint dt_uint;
+  DataItemInt dt_int;
+  DataItemFloat dt_float;
+  DataItemString dt_string;
+};
+
+enum CommandType {
+  Cmd_Invalid = 0,
+  Cmd_SetCursorPos = 1,
+  Cmd_MouseEvent = 2,
+  Cmd_SetWindowPos = 3,
+  Cmd_CreateWindow = 4,
+  Cmd_DestroyWindow = 5,
+  Cmd_SetWindowText = 6,
+  Cmd_MessageBoxEx = 7,
+};
+
+struct RemoteCommand {
+  CommandType type;
+  uint32_t nParams;
+  DataItem *params;
+  RemoteCommand() : type(Cmd_Invalid), nParams(0), params(NULL) {}
+  RemoteCommand(CommandType type, uint32_t nParams, DataItem *params)
+      : type(type), nParams(nParams), params(params) {}
+};
+
+struct RemoteCommandHeader {
+  uint32_t magic; // 0xC0AD
+  CommandType type;
+  uint32_t nParams;
+};
+
+RemoteCommand parseRemoteCommand(char *buffer) {
+  RemoteCommandHeader header = *(RemoteCommandHeader *)buffer;
+  if (header.magic != 0xC0AD) {
+    return RemoteCommand();
   }
-
-  res.push_back(s.substr(pos_start));
-  return res;
+  DataItem *params = (DataItem *)(buffer + sizeof(RemoteCommandHeader));
+  for (size_t i = 0; i < header.nParams; i++) {
+    if (params[i].type == String) {
+      // Relocate strings
+      params[i].dt_string.value = buffer + params[i].dt_uint.value;
+    }
+  }
+  return RemoteCommand(header.type, header.nParams, params);
 }
 
-void runRemoteCommand(HWND hwnd, char *buffer) {
-  // MessageBoxEx(hwnd, buffer, "Incoming Message", MB_OK, NULL);
-  std::string str = buffer;
-  std::vector<std::string> params = split(str, "|");
-
-  if (params[0] == "mp") {
-    SetCursorPos(atoi(params[1].c_str()), atoi(params[2].c_str()));
-  } else if (params[0] == "me") {
-    mouse_event(atoi(params[1].c_str()), 0, 0, NULL, NULL);
-  } else if (params[0] == "setWSize") {
-    SetWindowPos(handles[atoi(params[1].c_str())], NULL,
-                 atoi(params[2].c_str()), atoi(params[3].c_str()),
-                 atoi(params[4].c_str()), atoi(params[6].c_str()),
+void runRemoteCommand(HWND hwnd, RemoteCommand command) {
+  switch (command.type) {
+  case Cmd_SetCursorPos:
+    SetCursorPos(command.params[0].dt_uint.value,
+                 command.params[1].dt_uint.value);
+    break;
+  case Cmd_MouseEvent:
+    mouse_event(command.params[0].dt_uint.value, 0, 0, NULL, NULL);
+    break;
+  case Cmd_SetWindowPos:
+    SetWindowPos(handles[command.params[0].dt_uint.value], NULL,
+                 command.params[1].dt_int.value, command.params[2].dt_int.value,
+                 command.params[3].dt_int.value, command.params[4].dt_int.value,
                  SWP_NOZORDER);
-  } else if (params[0] == "addChildW") {
-    handles[atoi(params[1].c_str())] = CreateWindow(
-        params[2].c_str(), params[3].c_str(), WS_VISIBLE | WS_CHILD,
-        atoi(params[4].c_str()), atoi(params[5].c_str()),
-        atoi(params[6].c_str()), atoi(params[7].c_str()), hwnd,
-        (HMENU)atoi(params[8].c_str()), NULL, NULL);
-  } else if (params[0] == "setWText") {
-    SetWindowText(handles[atoi(params[1].c_str())], params[2].c_str());
-  } else {
-    MessageBoxEx(hwnd, ("Invalid Command! " + str).c_str(), "Info", MB_OK,
-                 NULL);
+    break;
+  case Cmd_CreateWindow:
+    handles[command.params[0].dt_uint.value] = CreateWindow(
+        command.params[1].dt_string.value, command.params[2].dt_string.value,
+        command.params[3].dt_uint.value, command.params[4].dt_int.value,
+        command.params[5].dt_int.value, command.params[6].dt_int.value,
+        command.params[7].dt_int.value,
+        handles[command.params[8].dt_uint.value],
+        (HMENU)command.params[9].dt_uint.value, NULL, NULL);
+    break;
+  case Cmd_DestroyWindow:
+    DestroyWindow(handles[command.params[0].dt_uint.value]);
+    break;
+  case Cmd_SetWindowText:
+    SetWindowText(handles[command.params[0].dt_uint.value],
+                  command.params[1].dt_string.value);
+    break;
+  default:
+    MessageBoxEx(hwnd, "Invalid Command!", "Info", MB_OK, NULL);
+    break;
   }
 }
 
@@ -114,29 +185,34 @@ int WINAPI WinMain(HINSTANCE hThisInstance, HINSTANCE hPrevInstance,
 
     char buffer[4096] = {0};
     unsigned long readt = RecieveData(buffer);
-    if (readt > 0) {
-      runRemoteCommand(hwnd, buffer);
+    if (readt >= sizeof(RemoteCommandHeader)) {
+      RemoteCommand cmd = parseRemoteCommand(buffer);
+      runRemoteCommand(hwnd, cmd);
     }
   }
 
   return messages.wParam;
 }
 
+struct WindowMessageToSend {
+  UINT message;
+  WPARAM wParam;
+  LPARAM lParam;
+};
+
 LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam,
                                  LPARAM lParam) {
-  char buffer[256] = {0};
+  WindowMessageToSend msg = {message, wParam, lParam};
+  char buffer[13];
+  memcpy(buffer, (char *)&msg, 12);
+  buffer[12] = '\r';
+  SendData(buffer, 13);
 
   switch (message) {
   case WM_DESTROY:
     CloseSerialPort();
     PostQuitMessage(0);
     return 0;
-
-  case WM_COMMAND:
-    itoa(LOWORD(wParam), buffer, 10);
-    std::strcat(buffer, "\r");
-    SendData(buffer, std::strlen(buffer));
-    break;
 
   default:
     return DefWindowProc(hwnd, message, wParam, lParam);

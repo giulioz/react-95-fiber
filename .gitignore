@@ -7,3 +7,6 @@ nano_root
 !small.img
 !filesystem95/**/*
 .DS_Store
+.parcel-cache
+dist
+build
