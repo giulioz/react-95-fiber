@@ -9,6 +9,7 @@ export enum CommandType {
   Cmd_DestroyWindow = 5,
   Cmd_SetWindowText = 6,
   Cmd_MessageBoxEx = 7,
+  Cmd_Ping = 8,
 }
 
 export enum DataType {
@@ -67,19 +68,35 @@ export interface EmulatorState {
   ready: boolean;
 }
 
-export type EventPayload = {
-  message: number;
-  wParam: number;
-  lParam: number;
-};
+export enum ResponseType {
+  Res_Invalid = 0,
+  Res_PingResponse = 1,
+  Res_WinProc = 2,
+}
 
-function parseEventPayload(data: ArrayBuffer) {
+export type EventPayload =
+  | {
+      type: ResponseType.Res_WinProc;
+      message: number;
+      wParam: number;
+      lParam: number;
+    }
+  | { type: ResponseType.Res_PingResponse }
+  | { type: ResponseType.Res_Invalid };
+
+function parseEventPayload(data: ArrayBuffer): EventPayload {
   const dv = new DataView(data);
-  return {
-    message: dv.getUint32(0, true),
-    wParam: dv.getUint32(4, true),
-    lParam: dv.getInt32(8, true),
-  };
+  const type = dv.getUint32(0, true) as ResponseType;
+  if (type === ResponseType.Res_WinProc) {
+    return {
+      type,
+      message: dv.getUint32(4, true),
+      wParam: dv.getUint32(8, true),
+      lParam: dv.getInt32(12, true),
+    };
+  } else {
+    return { type };
+  }
 }
 
 export type EmulatorEvents = {
@@ -123,22 +140,21 @@ export function initEmulator(
   };
 
   const buffer = [];
-  let bufferStr = "";
   v86Emulator.add_listener("serial0-output-char", (char) => {
     if (char !== "\r") {
       buffer.push(char.charCodeAt(0));
-      bufferStr += char;
       return;
     }
 
-    if (bufferStr.endsWith("READY")) {
-      events.onReady?.();
-      emuState.ready = true;
-    } else if (buffer.length === 12) {
+    if (buffer.length === 16) {
       events.onEvent?.(parseEventPayload(new Uint8Array(buffer).buffer));
+
+      if (!emuState.ready) {
+        events.onReady?.();
+        emuState.ready = true;
+      }
     }
     buffer.splice(0, buffer.length);
-    bufferStr = "";
   });
 
   function sendSerial(data: ArrayBuffer) {
@@ -255,12 +271,9 @@ export function initEmulator(
     );
   }, options.mouseUpdateInterval);
 
-  if (options.fromState) {
-    setTimeout(() => {
-      events.onReady?.();
-      emuState.ready = true;
-    }, 500);
-  }
+  setInterval(() => {
+    sendSerial(buildRemoteCommand(CommandType.Cmd_Ping, []));
+  }, 2000);
 
   return { state: emuState, api };
 }

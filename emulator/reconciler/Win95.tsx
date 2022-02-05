@@ -13,6 +13,7 @@ import {
   EmulatorAPI,
   EmulatorState,
   initEmulator,
+  ResponseType,
 } from "../emulator95/emulator";
 
 import { reconciler } from "./reconciler";
@@ -76,7 +77,7 @@ export function render(
         );
       },
       onEvent: (e) => {
-        if (e.message === WM_COMMAND) {
+        if (e.type === ResponseType.Res_WinProc && e.message === WM_COMMAND) {
           const record = state.events.get(e.wParam);
           if (record) record();
         }

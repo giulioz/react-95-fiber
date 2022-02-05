@@ -9,7 +9,6 @@
 LRESULT CALLBACK WindowProcedure(HWND, UINT, WPARAM, LPARAM);
 
 char szClassName[] = "WindowsApp";
-const char *readyMsg = "READY\r";
 
 std::map<int, HWND> handles;
 
@@ -58,6 +57,7 @@ enum CommandType {
   Cmd_DestroyWindow = 5,
   Cmd_SetWindowText = 6,
   Cmd_MessageBoxEx = 7,
+  Cmd_Ping = 8,
 };
 
 struct RemoteCommand {
@@ -73,6 +73,28 @@ struct RemoteCommandHeader {
   uint32_t magic; // 0xC0AD
   CommandType type;
   uint32_t nParams;
+};
+
+enum ResponseType {
+  Res_Invalid = 0,
+  Res_PingResponse = 1,
+  Res_WinProc = 2,
+};
+
+struct WindowMessageResponse {
+  UINT message;
+  WPARAM wParam;
+  LPARAM lParam;
+};
+
+union RemoteResponseData {
+  uint32_t none;
+  WindowMessageResponse wndProc;
+};
+
+struct RemoteResponse {
+  ResponseType type;
+  RemoteResponseData data;
 };
 
 RemoteCommand parseRemoteCommand(char *buffer) {
@@ -121,6 +143,14 @@ void runRemoteCommand(HWND hwnd, RemoteCommand command) {
     SetWindowText(handles[command.params[0].dt_uint.value],
                   command.params[1].dt_string.value);
     break;
+  case Cmd_Ping: {
+    RemoteResponse msg = {Res_PingResponse, 0};
+    char buffer[9];
+    memcpy(buffer, (char *)&msg, 8);
+    buffer[8] = '\r';
+    SendData(buffer, 9);
+    break;
+  }
   default:
     MessageBoxEx(hwnd, "Invalid Command!", "Info", MB_OK, NULL);
     break;
@@ -175,8 +205,6 @@ int WINAPI WinMain(HINSTANCE hThisInstance, HINSTANCE hPrevInstance,
 
   ShowWindow(hwnd, nFunsterStil);
 
-  SendData(readyMsg, std::strlen(readyMsg));
-
   while (messages.message != WM_QUIT) {
     if (PeekMessage(&messages, NULL, 0, 0, PM_REMOVE) > 0) {
       TranslateMessage(&messages);
@@ -194,19 +222,15 @@ int WINAPI WinMain(HINSTANCE hThisInstance, HINSTANCE hPrevInstance,
   return messages.wParam;
 }
 
-struct WindowMessageToSend {
-  UINT message;
-  WPARAM wParam;
-  LPARAM lParam;
-};
-
 LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam,
                                  LPARAM lParam) {
-  WindowMessageToSend msg = {message, wParam, lParam};
-  char buffer[13];
-  memcpy(buffer, (char *)&msg, 12);
-  buffer[12] = '\r';
-  SendData(buffer, 13);
+  WindowMessageResponse wndMsg = {message, wParam, lParam};
+  RemoteResponse msg = {Res_WinProc};
+  msg.data.wndProc = wndMsg;
+  char buffer[17];
+  memcpy(buffer, (char *)&msg, 16);
+  buffer[16] = '\r';
+  SendData(buffer, 17);
 
   switch (message) {
   case WM_DESTROY:
