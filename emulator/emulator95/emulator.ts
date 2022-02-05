@@ -92,7 +92,7 @@ export type EmulatorAPI = ReturnType<typeof initEmulator>["api"];
 export function initEmulator(
   screenContainer: HTMLDivElement,
   events: EmulatorEvents,
-  options = { scale: 0.5, mouseUpdateInterval: 20 }
+  options = { scale: 0.5, mouseUpdateInterval: 20, fromState: true }
 ) {
   const v86Emulator = new V86Starter({
     screen_container: screenContainer,
@@ -100,11 +100,12 @@ export function initEmulator(
     bios: { url: require("url:../v86/seabios.bin") },
     vga_bios: { url: require("url:../v86/vgabios.bin") },
     hda: { url: require("url:./os.img") },
+    initial_state: options.fromState && { url: require("url:./state.bin") },
     boot_order: 0x132,
-    memory_size: 64 * 1024 * 1024,
+    memory_size: 32 * 1024 * 1024,
     disable_mouse: true,
     // disable_keyboard: true,
-    autostart: false,
+    autostart: options.fromState,
   });
 
   v86Emulator.add_listener("screen-set-mode", (isGraphical) => {
@@ -253,6 +254,13 @@ export function initEmulator(
       ])
     );
   }, options.mouseUpdateInterval);
+
+  if (options.fromState) {
+    setTimeout(() => {
+      events.onReady?.();
+      emuState.ready = true;
+    }, 10);
+  }
 
   return { state: emuState, api };
 }

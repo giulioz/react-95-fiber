@@ -11,6 +11,24 @@ export function Emulator() {
   const [input, setInput] = useState("");
   const [output, setOutput] = useState("");
 
+  function saveState() {
+    emulatorRef.current.state.v86Emulator.save_state((error, state) => {
+      const blob = new Blob([state]);
+
+      const a = document.createElement("a");
+      a["download"] = "state.bin";
+      a.href = window.URL.createObjectURL(blob);
+      a.dataset["downloadurl"] = [
+        "application/octet-stream",
+        a["download"],
+        a.href,
+      ].join(":");
+
+      a.click();
+      window.URL.revokeObjectURL(a.href);
+    });
+  }
+
   return (
     <>
       <button onClick={() => emulatorRef.current.state.v86Emulator.run()}>
@@ -19,6 +37,7 @@ export function Emulator() {
       <button onClick={() => emulatorRef.current.state.v86Emulator.restart()}>
         restart
       </button>
+      <button onClick={saveState}>save</button>
 
       <Win95 ref={emulatorRef}>
         <w95Window
