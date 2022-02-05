@@ -259,7 +259,7 @@ export function initEmulator(
     setTimeout(() => {
       events.onReady?.();
       emuState.ready = true;
-    }, 10);
+    }, 500);
   }
 
   return { state: emuState, api };

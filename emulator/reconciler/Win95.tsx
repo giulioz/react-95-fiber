@@ -121,7 +121,6 @@ export const Win95 = forwardRef<
   const emulatorRef = useRef<Win95Ref>(null);
 
   useLayoutEffect(() => {
-    console.log(emulatorRef.current);
     emulatorRef.current = render(children, emulatorDivRef.current!, {
       onReady,
     });
