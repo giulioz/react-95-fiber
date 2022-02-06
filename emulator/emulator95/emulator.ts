@@ -117,7 +117,7 @@ export function initEmulator(
     bios: { url: require("url:../v86/seabios.bin") },
     vga_bios: { url: require("url:../v86/vgabios.bin") },
     hda: { url: require("url:./os.img") },
-    initial_state: options.fromState && { url: require("url:./state.bin") },
+    // initial_state: options.fromState && { url: require("url:./state.bin") },
     boot_order: 0x132,
     memory_size: 32 * 1024 * 1024,
     disable_mouse: true,
@@ -195,6 +195,7 @@ export function initEmulator(
 
     createWindow(window: {
       id: number;
+      extStyle: number;
       type: string;
       text: string;
       params: number;
@@ -208,6 +209,7 @@ export function initEmulator(
       sendSerial(
         buildRemoteCommand(CommandType.Cmd_CreateWindow, [
           { type: DataType.UInt, value: window.id },
+          { type: DataType.UInt, value: window.extStyle },
           { type: DataType.String, value: window.type },
           { type: DataType.String, value: window.text },
           { type: DataType.UInt, value: window.params },

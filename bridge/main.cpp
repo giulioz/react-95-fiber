@@ -129,14 +129,15 @@ void runRemoteCommand(HWND hwnd, RemoteCommand command) {
                  SWP_NOZORDER);
     break;
   case Cmd_CreateWindow:
-    handles[command.params[0].dt_uint.value] = CreateWindow(
-        command.params[1].dt_string.value, command.params[2].dt_string.value,
-        command.params[3].dt_uint.value, command.params[4].dt_int.value,
+    handles[command.params[0].dt_uint.value] = CreateWindowEx(
+        command.params[1].dt_uint.value, command.params[2].dt_string.value,
+        command.params[3].dt_string.value, command.params[4].dt_uint.value,
         command.params[5].dt_int.value, command.params[6].dt_int.value,
-        command.params[7].dt_int.value,
-        handles[command.params[8].dt_uint.value],
-        (HMENU)command.params[9].dt_uint.value, NULL, NULL);
-    SendMessage(handles[command.params[0].dt_uint.value], WM_SETFONT, WPARAM(defaultFont), TRUE);
+        command.params[7].dt_int.value, command.params[8].dt_int.value,
+        handles[command.params[9].dt_uint.value],
+        (HMENU)command.params[10].dt_uint.value, NULL, NULL);
+    SendMessage(handles[command.params[0].dt_uint.value], WM_SETFONT,
+                WPARAM(defaultFont), TRUE);
     break;
   case Cmd_DestroyWindow:
     DestroyWindow(handles[command.params[0].dt_uint.value]);

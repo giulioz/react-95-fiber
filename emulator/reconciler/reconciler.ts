@@ -12,14 +12,15 @@ type NodeType = (
       type: "w95Window";
       id: number;
       props: {
+        extStyle?: number;
         windowType: string;
-        text: string;
+        text?: string;
         params: number;
         x: number;
         y: number;
         w: number;
         h: number;
-        onCommand: () => void;
+        onCommand?: () => void;
       };
     }
 ) & { root: RootNode };
@@ -29,11 +30,16 @@ function getIncremental() {
   return incremental++;
 }
 
-function createInstance(type: string, { type: windowType, ...props }: any) {
+function createInstance(
+  type: string,
+  { type: windowType, ...props }: any,
+  rootContainer
+) {
   return {
     type: type,
     props: { windowType, ...props },
     id: getIncremental(),
+    root: rootContainer.root,
   };
 }
 
@@ -42,13 +48,11 @@ function createTextInstance(newText: string, rootContainerInstance: RootNode) {
 }
 
 function appendChild(parentInstance: NodeType, child: NodeType) {
-  child.root = child.root || parentInstance.root;
-
   if (child.type === "w95Window" && parentInstance.type !== "text") {
-    parentInstance.root.api.createWindow({
+    child.root.api.createWindow({
       id: child.id,
       type: child.props.windowType,
-      text: child.props.text,
+      text: child.props.text || "",
       params: child.props.params,
       x: child.props.x,
       y: child.props.y,
@@ -56,6 +60,7 @@ function appendChild(parentInstance: NodeType, child: NodeType) {
       h: child.props.h,
       parentId: parentInstance.id,
       menuId: child.id,
+      extStyle: child.props.extStyle || 0,
     });
     if (child.props.onCommand) {
       child.root.events.set(child.id, child.props.onCommand);

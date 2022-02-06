@@ -2,7 +2,8 @@ import ReactDOM from "react-dom";
 import React, { useRef, useState } from "react";
 
 import { Win95, Win95Ref } from "./reconciler/Win95";
-import { WS_VISIBLE, WS_CHILD } from "./emulator95/constants";
+import { WS_VISIBLE, WS_CHILD, WS_EX_CLIENTEDGE } from "./emulator95/constants";
+import { Button } from "./components/Button";
 
 export function Emulator() {
   const emulatorRef = useRef<Win95Ref>(null);
@@ -40,39 +41,33 @@ export function Emulator() {
       <button onClick={saveState}>save</button>
 
       <Win95 ref={emulatorRef}>
-        <w95Window
-          type="Button"
-          onCommand={() => setOutput(`Button 1 pressed`)}
-          params={WS_VISIBLE | WS_CHILD}
+        <Button
+          onClick={() => setOutput(`Button 1 pressed`)}
           x={10}
           y={10}
           w={70}
           h={20}
         >
           Test 1
-        </w95Window>
-        <w95Window
-          type="Button"
-          onCommand={() => setOutput(`Button 2 pressed`)}
-          params={WS_VISIBLE | WS_CHILD}
+        </Button>
+        <Button
+          onClick={() => setOutput(`Button 2 pressed`)}
           x={10}
           y={40}
           w={70}
           h={20}
         >
           Test 2
-        </w95Window>
-        <w95Window
-          type="Button"
-          onCommand={() => setOutput(`Button 3 pressed`)}
-          params={WS_VISIBLE | WS_CHILD}
+        </Button>
+        <Button
+          onClick={() => setOutput(`Button 3 pressed`)}
           x={10}
           y={70}
           w={70}
           h={20}
         >
           Test 3
-        </w95Window>
+        </Button>
 
         <w95Window
           type="Static"
@@ -80,6 +75,18 @@ export function Emulator() {
           x={10}
           y={100}
           w={70}
+          h={20}
+        >
+          Test text
+        </w95Window>
+
+        <w95Window
+          type="Edit"
+          params={WS_VISIBLE | WS_CHILD}
+          extStyle={WS_EX_CLIENTEDGE}
+          x={10}
+          y={140}
+          w={100}
           h={20}
         >
           Test text
