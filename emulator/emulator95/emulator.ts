@@ -109,7 +109,7 @@ export type EmulatorAPI = ReturnType<typeof initEmulator>["api"];
 export function initEmulator(
   screenContainer: HTMLDivElement,
   events: EmulatorEvents,
-  options = { scale: 0.5, mouseUpdateInterval: 20, fromState: true }
+  options = { scale: 0.5, mouseUpdateInterval: 20, fromState: false }
 ) {
   const v86Emulator = new V86Starter({
     screen_container: screenContainer,
@@ -166,6 +166,16 @@ export function initEmulator(
 
   const api = {
     sendSerial,
+
+    startBridge() {
+      v86Emulator.keyboard_send_scancodes([0x1d, 0x13]);
+      v86Emulator.keyboard_send_scancodes([0x9d, 0x93]);
+      v86Emulator.keyboard_send_text(
+        '"c:\\windows\\start menu\\Programs\\StartUp\\bridge.exe"'
+      );
+      v86Emulator.keyboard_send_scancodes([0x1c]);
+      v86Emulator.keyboard_send_scancodes([0x9c]);
+    },
 
     setMousePos(x: number, y: number) {
       emuState.mousePos = [x, y];

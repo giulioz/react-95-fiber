@@ -8,6 +8,7 @@
 
 LRESULT CALLBACK WindowProcedure(HWND, UINT, WPARAM, LPARAM);
 
+HFONT defaultFont;
 char szClassName[] = "WindowsApp";
 
 std::map<int, HWND> handles;
@@ -135,6 +136,7 @@ void runRemoteCommand(HWND hwnd, RemoteCommand command) {
         command.params[7].dt_int.value,
         handles[command.params[8].dt_uint.value],
         (HMENU)command.params[9].dt_uint.value, NULL, NULL);
+    SendMessage(handles[command.params[0].dt_uint.value], WM_SETFONT, WPARAM(defaultFont), TRUE);
     break;
   case Cmd_DestroyWindow:
     DestroyWindow(handles[command.params[0].dt_uint.value]);
@@ -200,6 +202,8 @@ int WINAPI WinMain(HINSTANCE hThisInstance, HINSTANCE hPrevInstance,
                      NULL           /* No Window Creation data */
       );
   handles[0] = hwnd;
+
+  defaultFont = (HFONT)GetStockObject(DEFAULT_GUI_FONT);
 
   SetupSerialPort(hwnd);
 
