@@ -1,4 +1,5 @@
-import "../v86/libv86";
+import { V86Starter } from 'v86-module/src';
+import { CommBus } from './commBus';
 
 export enum CommandType {
   Cmd_Invalid = 0,
@@ -20,24 +21,15 @@ export enum DataType {
   String = 4,
 }
 
-function buildRemoteCommand(
-  type: CommandType,
-  params: { type: DataType; value: string | number }[]
-) {
+function buildRemoteCommand(type: CommandType, params: { type: DataType; value: string | number }[]) {
   const magic = 0xc0ad;
-  const paramsByteLength = params
-    .map(
-      (p) =>
-        4 +
-        (p.type === DataType.String ? (p.value as string).length + 1 + 4 : 4)
-    )
-    .reduce((a, b) => a + b, 0);
-  const buffer = new ArrayBuffer(4 + 4 + 4 + paramsByteLength + 1);
+  const paramsByteLength = params.map(p => 4 + (p.type === DataType.String ? (p.value as string).length + 1 + 4 : 4)).reduce((a, b) => a + b, 0);
+  const buffer = new ArrayBuffer(4 + 4 + 4 + paramsByteLength);
   const view = new DataView(buffer);
   view.setUint32(0, magic, true);
   view.setUint32(4, type, true);
   view.setUint32(8, params.length, true);
-  let stringPos = buffer.byteLength - 1;
+  let stringPos = buffer.byteLength;
   for (let i = 0; i < params.length; i++) {
     const param = params[i];
     view.setUint32(12 + i * 8, param.type, true);
@@ -58,13 +50,11 @@ function buildRemoteCommand(
       view.setUint32(12 + i * 8 + 4, stringPos, true);
     }
   }
-  view.setUint8(buffer.byteLength - 1, "\r".charCodeAt(0));
   return buffer;
 }
 
 export interface EmulatorState {
   v86Emulator: V86Starter;
-  mousePos: [number, number];
   ready: boolean;
 }
 
@@ -104,20 +94,36 @@ export type EmulatorEvents = {
   onEvent?: (data: EventPayload) => void;
 };
 
-export type EmulatorAPI = ReturnType<typeof initEmulator>["api"];
+export type Binaries = {
+  v86WASM?: ArrayBuffer;
+  v86WASMFn?: any;
+  seabios?: ArrayBuffer;
+  seabiosUrl?: string;
+  vgabios?: ArrayBuffer;
+  vgabiosUrl?: string;
+  osImg?: ArrayBuffer;
+  osImgUrl?: string;
+};
+
+function wrapWasm(wasmAB: ArrayBuffer) {
+  return async (param: any) => (await WebAssembly.instantiate(wasmAB, param)).instance.exports;
+}
+
+export type EmulatorAPI = ReturnType<typeof initEmulator>['api'];
 
 export function initEmulator(
   screenContainer: HTMLDivElement,
   events: EmulatorEvents,
-  options = { scale: 0.5, mouseUpdateInterval: 20, fromState: false }
+  binaries: Binaries,
+  options = { scale: 0.5, mouseUpdateInterval: 20, fromState: false },
 ) {
   const v86Emulator = new V86Starter({
     screen_container: screenContainer,
-    wasm_path: require("url:../v86/v86.wasm"),
-    bios: { url: require("url:../v86/seabios.bin") },
-    vga_bios: { url: require("url:../v86/vgabios.bin") },
-    hda: { url: require("url:./os.img") },
-    // initial_state: options.fromState && { url: require("url:./state.bin") },
+    wasm_fn: binaries.v86WASM ? wrapWasm(binaries.v86WASM) : binaries.v86WASMFn,
+    bios: binaries.seabios ? { buffer: binaries.seabios } : { url: binaries.seabiosUrl },
+    vga_bios: binaries.vgabios ? { buffer: binaries.vgabios } : { url: binaries.vgabiosUrl },
+    hda: binaries.osImg ? { buffer: binaries.osImg } : { url: binaries.osImgUrl },
+    // initial_state: options.fromState && { url: './state.bin' },
     boot_order: 0x132,
     memory_size: 32 * 1024 * 1024,
     disable_mouse: true,
@@ -125,43 +131,26 @@ export function initEmulator(
     autostart: options.fromState,
   });
 
-  v86Emulator.add_listener("screen-set-mode", (isGraphical) => {
-    if (isGraphical) {
-      v86Emulator.screen_set_scale(options.scale, options.scale);
-    } else {
-      v86Emulator.screen_set_scale(1, 1);
-    }
-  });
-
-  const emuState: EmulatorState = {
-    v86Emulator,
-    mousePos: [0, 0],
-    ready: false,
-  };
-
-  const buffer = [];
-  v86Emulator.add_listener("serial0-output-char", (char) => {
-    if (char !== "\r") {
-      buffer.push(char.charCodeAt(0));
-      return;
-    }
-
-    if (buffer.length === 16) {
-      events.onEvent?.(parseEventPayload(new Uint8Array(buffer).buffer));
+  v86Emulator.add_listener('emulator-started', () => {
+    v86Emulator.v86.cpu.devices.commBus = new CommBus(v86Emulator.v86.cpu, pkg => {
+      if (pkg.byteLength !== 16) return;
+      events.onEvent?.(parseEventPayload(pkg));
 
       if (!emuState.ready) {
         events.onReady?.();
         emuState.ready = true;
       }
-    }
-    buffer.splice(0, buffer.length);
+    });
   });
 
+  const emuState: EmulatorState = {
+    v86Emulator,
+    ready: false,
+  };
+
   function sendSerial(data: ArrayBuffer) {
-    const bytes = new Uint8Array(data);
-    for (let i = 0; i < bytes.length; i++) {
-      v86Emulator.bus.send("serial0-input", bytes[i]);
-    }
+    const commBus = v86Emulator.v86.cpu.devices.commBus as CommBus;
+    commBus && commBus.sendData(data);
   }
 
   const api = {
@@ -170,15 +159,19 @@ export function initEmulator(
     startBridge() {
       v86Emulator.keyboard_send_scancodes([0x1d, 0x13]);
       v86Emulator.keyboard_send_scancodes([0x9d, 0x93]);
-      v86Emulator.keyboard_send_text(
-        '"c:\\windows\\start menu\\Programs\\StartUp\\bridge.exe"'
-      );
+      v86Emulator.keyboard_send_text('"c:\\windows\\start menu\\Programs\\StartUp\\bridge.exe"');
       v86Emulator.keyboard_send_scancodes([0x1c]);
       v86Emulator.keyboard_send_scancodes([0x9c]);
     },
 
     setMousePos(x: number, y: number) {
-      emuState.mousePos = [x, y];
+      if (!emuState.ready) return;
+      sendSerial(
+        buildRemoteCommand(CommandType.Cmd_SetCursorPos, [
+          { type: DataType.Int, value: x },
+          { type: DataType.Int, value: y },
+        ]),
+      );
     },
 
     setWindowPos(id: number, x: number, y: number, w: number, h: number) {
@@ -189,7 +182,7 @@ export function initEmulator(
           { type: DataType.Int, value: y },
           { type: DataType.Int, value: w },
           { type: DataType.Int, value: h },
-        ])
+        ]),
       );
     },
 
@@ -219,16 +212,12 @@ export function initEmulator(
           { type: DataType.Int, value: window.h },
           { type: DataType.UInt, value: window.parentId },
           { type: DataType.UInt, value: window.menuId },
-        ])
+        ]),
       );
     },
 
     destroyWindow(id: number) {
-      sendSerial(
-        buildRemoteCommand(CommandType.Cmd_DestroyWindow, [
-          { type: DataType.UInt, value: id },
-        ])
-      );
+      sendSerial(buildRemoteCommand(CommandType.Cmd_DestroyWindow, [{ type: DataType.UInt, value: id }]));
     },
 
     setWindowText(id: number, text: string) {
@@ -236,52 +225,26 @@ export function initEmulator(
         buildRemoteCommand(CommandType.Cmd_SetWindowText, [
           { type: DataType.UInt, value: id },
           { type: DataType.String, value: text },
-        ])
+        ]),
       );
     },
 
     sendMouseEvent(down: boolean, button: 0 | 2) {
       if (down) {
         if (button === 0) {
-          sendSerial(
-            buildRemoteCommand(CommandType.Cmd_MouseEvent, [
-              { type: DataType.UInt, value: 2 },
-            ])
-          );
+          sendSerial(buildRemoteCommand(CommandType.Cmd_MouseEvent, [{ type: DataType.UInt, value: 2 }]));
         } else if (button === 2) {
-          sendSerial(
-            buildRemoteCommand(CommandType.Cmd_MouseEvent, [
-              { type: DataType.UInt, value: 8 },
-            ])
-          );
+          sendSerial(buildRemoteCommand(CommandType.Cmd_MouseEvent, [{ type: DataType.UInt, value: 8 }]));
         }
       } else {
         if (button === 0) {
-          sendSerial(
-            buildRemoteCommand(CommandType.Cmd_MouseEvent, [
-              { type: DataType.UInt, value: 4 },
-            ])
-          );
+          sendSerial(buildRemoteCommand(CommandType.Cmd_MouseEvent, [{ type: DataType.UInt, value: 4 }]));
         } else if (button === 2) {
-          sendSerial(
-            buildRemoteCommand(CommandType.Cmd_MouseEvent, [
-              { type: DataType.UInt, value: 16 },
-            ])
-          );
+          sendSerial(buildRemoteCommand(CommandType.Cmd_MouseEvent, [{ type: DataType.UInt, value: 16 }]));
         }
       }
     },
   };
-
-  setInterval(() => {
-    if (!emuState.ready) return;
-    sendSerial(
-      buildRemoteCommand(CommandType.Cmd_SetCursorPos, [
-        { type: DataType.Int, value: emuState.mousePos[0] },
-        { type: DataType.Int, value: emuState.mousePos[1] },
-      ])
-    );
-  }, options.mouseUpdateInterval);
 
   setInterval(() => {
     sendSerial(buildRemoteCommand(CommandType.Cmd_Ping, []));

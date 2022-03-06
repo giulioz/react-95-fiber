@@ -67,13 +67,7 @@ export const WS_THICKFRAME = 0x00040000;
 export const WS_TILED = 0x00000000;
 
 // The window is an overlapped window. Same as the WS_OVERLAPPEDWINDOW style.
-export const WS_TILEDWINDOW =
-  WS_OVERLAPPED |
-  WS_CAPTION |
-  WS_SYSMENU |
-  WS_THICKFRAME |
-  WS_MINIMIZEBOX |
-  WS_MAXIMIZEBOX;
+export const WS_TILEDWINDOW = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX;
 
 // The window is initially visible.
 // This style can be turned on and off by using the ShowWindow or SetWindowPos function.
@@ -83,13 +77,7 @@ export const WS_VISIBLE = 0x10000000;
 export const WS_VSCROLL = 0x00200000;
 
 // The window is an overlapped window. Same as the WS_TILEDWINDOW style.
-export const WS_OVERLAPPEDWINDOW =
-  WS_OVERLAPPED |
-  WS_CAPTION |
-  WS_SYSMENU |
-  WS_THICKFRAME |
-  WS_MINIMIZEBOX |
-  WS_MAXIMIZEBOX;
+export const WS_OVERLAPPEDWINDOW = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX;
 
 // The window is a pop-up window. The WS_CAPTION and WS_POPUPWINDOW styles must be combined to make the window menu visible.
 export const WS_POPUPWINDOW = WS_POPUP | WS_BORDER | WS_SYSMENU;

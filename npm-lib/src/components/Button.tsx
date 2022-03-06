@@ -1,4 +1,5 @@
-import { WS_VISIBLE, WS_CHILD } from "../emulator95/constants";
+import React from 'react';
+import { WS_VISIBLE, WS_CHILD } from '../emulator95/constants';
 
 export function Button({
   onClick,
@@ -16,15 +17,7 @@ export function Button({
   children: string | JSX.Element;
 }) {
   return (
-    <w95Window
-      type="Button"
-      onCommand={onClick}
-      params={WS_VISIBLE | WS_CHILD}
-      x={x}
-      y={y}
-      w={w}
-      h={h}
-    >
+    <w95Window type='Button' onCommand={onClick} params={WS_VISIBLE | WS_CHILD} x={x} y={y} w={w} h={h}>
       {children}
     </w95Window>
   );

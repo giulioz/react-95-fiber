@@ -1,22 +1,8 @@
-import React, {
-  useRef,
-  HTMLAttributes,
-  useLayoutEffect,
-  PropsWithChildren,
-  createContext,
-  ReactNode,
-  useContext,
-  forwardRef,
-} from "react";
-import { WM_COMMAND } from "../emulator95/constants";
-import {
-  EmulatorAPI,
-  EmulatorState,
-  initEmulator,
-  ResponseType,
-} from "../emulator95/emulator";
+import React, { useRef, HTMLAttributes, useLayoutEffect, PropsWithChildren, createContext, ReactNode, useContext, forwardRef } from 'react';
+import { WM_COMMAND } from '../emulator95/constants';
+import { Binaries, EmulatorAPI, EmulatorState, initEmulator, ResponseType } from '../emulator95/emulator';
 
-import { reconciler } from "./reconciler";
+import { reconciler } from './reconciler';
 
 export interface Win95Ref {
   state: EmulatorState;
@@ -24,7 +10,7 @@ export interface Win95Ref {
 }
 
 export type RootNode = Win95Ref & {
-  type: "root";
+  type: 'root';
   root: RootNode;
   id: 0;
   events: Map<number, () => void>;
@@ -36,26 +22,23 @@ const roots = new Map<HTMLDivElement, { root: any; state: RootNode }>();
 export function useWin95() {
   const value = useContext(context);
   if (!value) {
-    throw new Error("No context available!");
+    throw new Error('No context available!');
   }
   return value;
 }
 
 interface Win95Props {
   onReady?: () => void;
+  binaries: Binaries;
 }
 
-export function render(
-  element: ReactNode,
-  rootDiv: HTMLDivElement,
-  w95Props: Win95Props
-) {
+export function render(element: ReactNode, rootDiv: HTMLDivElement, w95Props: Win95Props, binaries: Binaries) {
   const store = roots.get(rootDiv);
   let root = store?.root;
   const state = store?.state || {
     state: null,
     api: null,
-    type: "root",
+    type: 'root',
     root: null,
     id: 0,
     events: new Map<number, () => void>(),
@@ -63,26 +46,23 @@ export function render(
   state.root = state;
 
   if (!root) {
-    const emuReturn = initEmulator(rootDiv, {
-      onReady: () => {
-        w95Props.onReady?.();
+    const emuReturn = initEmulator(
+      rootDiv,
+      {
+        onReady: () => {
+          w95Props.onReady?.();
 
-        reconciler.updateContainer(
-          <context.Provider value={state as RootNode}>
-            {element}
-          </context.Provider>,
-          root,
-          null,
-          () => undefined
-        );
+          reconciler.updateContainer(<context.Provider value={state as RootNode}>{element}</context.Provider>, root, null, () => undefined);
+        },
+        onEvent: e => {
+          if (e.type === ResponseType.Res_WinProc && e.message === WM_COMMAND) {
+            const record = state.events.get(e.wParam);
+            if (record) record();
+          }
+        },
       },
-      onEvent: (e) => {
-        if (e.type === ResponseType.Res_WinProc && e.message === WM_COMMAND) {
-          const record = state.events.get(e.wParam);
-          if (record) record();
-        }
-      },
-    });
+      binaries,
+    );
     Object.assign(state, emuReturn);
 
     root = reconciler.createContainer(state, 1, false, null);
@@ -91,12 +71,7 @@ export function render(
   roots.set(rootDiv, { root, state: state as RootNode });
 
   if (state.state?.ready) {
-    reconciler.updateContainer(
-      <context.Provider value={state as RootNode}>{element}</context.Provider>,
-      root,
-      null,
-      () => undefined
-    );
+    reconciler.updateContainer(<context.Provider value={state as RootNode}>{element}</context.Provider>, root, null, () => undefined);
   }
 
   return state;
@@ -114,18 +89,16 @@ export function unmountComponentAtNode(rootDiv: HTMLDivElement) {
   });
 }
 
-export const Win95 = forwardRef<
-  Win95Ref,
-  PropsWithChildren<HTMLAttributes<HTMLDivElement> & Win95Props>
->(function Win95({ children, style, onReady }, ref) {
+export const Win95 = forwardRef<Win95Ref, PropsWithChildren<HTMLAttributes<HTMLDivElement> & Win95Props>>(function Win95(
+  { children, style, onReady, binaries },
+  ref,
+) {
   const emulatorDivRef = useRef<HTMLDivElement>(null);
   const emulatorRef = useRef<Win95Ref>(null);
 
   useLayoutEffect(() => {
-    emulatorRef.current = render(children, emulatorDivRef.current!, {
-      onReady,
-    });
-    if (typeof ref === "function") ref(emulatorRef.current);
+    emulatorRef.current = render(children, emulatorDivRef.current!, { onReady }, binaries);
+    if (typeof ref === 'function') ref(emulatorRef.current);
     else ref.current = emulatorRef.current;
   }, [children, onReady]);
 
@@ -143,24 +116,20 @@ export const Win95 = forwardRef<
   return (
     <div
       ref={emulatorDivRef}
-      onContextMenu={(e) => e.preventDefault()}
+      onContextMenu={e => e.preventDefault()}
       onMouseMove={handleMouseMove}
-      onMouseDown={(e) =>
-        emulatorRef.current.api.sendMouseEvent(true, e.button as 0 | 2)
-      }
-      onMouseUp={(e) =>
-        emulatorRef.current.api.sendMouseEvent(false, e.button as 0 | 2)
-      }
+      onMouseDown={e => emulatorRef.current.api.sendMouseEvent(true, e.button as 0 | 2)}
+      onMouseUp={e => emulatorRef.current.api.sendMouseEvent(false, e.button as 0 | 2)}
     >
       <div
         style={{
-          whiteSpace: "pre",
-          font: "14px monospace",
-          lineHeight: "14px",
+          whiteSpace: 'pre',
+          font: '14px monospace',
+          lineHeight: '14px',
           ...(style || {}),
         }}
       />
-      <canvas style={{ display: "none" }} />
+      <canvas style={{ display: 'none' }} />
     </div>
   );
 });

@@ -1,40 +1,35 @@
-import React from "react";
-import Reconciler from "react-reconciler";
-import { unstable_now as now } from "scheduler";
+import Reconciler from 'react-reconciler';
+import { unstable_now as now } from 'scheduler';
 
-import { pascalCase, pruneKeys, shallowCompare } from "./utils";
-import { RootNode } from "./Win95";
+import { RootNode } from './Win95';
 
-type NodeType = (
-  | RootNode
-  | { type: "text"; content: string }
-  | {
-      type: "w95Window";
-      id: number;
-      props: {
-        extStyle?: number;
-        windowType: string;
-        text?: string;
-        params: number;
-        x: number;
-        y: number;
-        w: number;
-        h: number;
-        onCommand?: () => void;
-      };
-    }
-) & { root: RootNode };
+type NodeType =
+  | (
+      | RootNode
+      | { type: 'text'; content: string }
+      | {
+          type: 'w95Window';
+          id: number;
+          props: {
+            extStyle?: number;
+            windowType: string;
+            text?: string;
+            params: number;
+            x: number;
+            y: number;
+            w: number;
+            h: number;
+            onCommand?: () => void;
+          };
+        }
+    ) & { root: RootNode };
 
 let incremental = 3;
 function getIncremental() {
   return incremental++;
 }
 
-function createInstance(
-  type: string,
-  { type: windowType, ...props }: any,
-  rootContainer
-) {
+function createInstance(type: string, { type: windowType, ...props }: any, rootContainer: any) {
   return {
     type: type,
     props: { windowType, ...props },
@@ -44,15 +39,15 @@ function createInstance(
 }
 
 function createTextInstance(newText: string, rootContainerInstance: RootNode) {
-  return { type: "text", content: newText };
+  return { type: 'text', content: newText };
 }
 
 function appendChild(parentInstance: NodeType, child: NodeType) {
-  if (child.type === "w95Window" && parentInstance.type !== "text") {
+  if (child.type === 'w95Window' && parentInstance.type !== 'text') {
     child.root.api.createWindow({
       id: child.id,
       type: child.props.windowType,
-      text: child.props.text || "",
+      text: child.props.text || '',
       params: child.props.params,
       x: child.props.x,
       y: child.props.y,
@@ -67,28 +62,24 @@ function appendChild(parentInstance: NodeType, child: NodeType) {
     }
   }
 
-  if (child.type === "text" && parentInstance.type === "w95Window") {
+  if (child.type === 'text' && parentInstance.type === 'w95Window') {
     parentInstance.props.text = child.content;
   }
 }
 
 function removeChild(parentInstance: NodeType, child: NodeType) {
-  if (child.type === "w95Window" && parentInstance.type !== "text") {
+  if (child.type === 'w95Window' && parentInstance.type !== 'text') {
     child.root.events.delete(child.id);
     parentInstance.root.api.destroyWindow(child.id);
   }
 }
 
-function insertBefore(
-  parentInstance: NodeType,
-  child: NodeType,
-  beforeChild: NodeType
-) {
-  console.log("insertBefore", { parentInstance, child, beforeChild });
+function insertBefore(parentInstance: NodeType, child: NodeType, beforeChild: NodeType) {
+  console.log('insertBefore', { parentInstance, child, beforeChild });
 }
 
-function applyProps(instance: NodeType, newProps, oldProps) {
-  console.log("applyProps", { instance, newProps, oldProps });
+function applyProps(instance: NodeType, newProps: any, oldProps: any) {
+  console.log('applyProps', { instance, newProps, oldProps });
 }
 
 export const reconciler = Reconciler({
@@ -98,24 +89,17 @@ export const reconciler = Reconciler({
   isPrimaryRenderer: false,
 
   // We can modify the ref here, but we return it instead (no-op)
-  getPublicInstance: (instance) => instance,
+  getPublicInstance: instance => instance,
 
   // This object that's passed into the reconciler is the host context.
   // We don't need to expose it though
   getRootHostContext: () => ({}),
   getChildHostContext: () => ({}),
 
-  prepareUpdate(
-    instance: NodeType,
-    type: string,
-    oldProps: any,
-    newProps: any
-  ) {
+  prepareUpdate(instance: NodeType, type: string, oldProps: any, newProps: any) {
     return true;
   },
 
-  // This lets us store stuff before React mutates our OL objects.
-  // We don't do anything here but return an empty object
   prepareForCommit: () => null,
   resetAfterCommit: () => ({}),
 
@@ -144,19 +128,14 @@ export const reconciler = Reconciler({
 
   insertBefore,
 
-  insertInContainerBefore: (parentInstance, child, beforeChild) =>
-    insertBefore(parentInstance, child, beforeChild),
+  insertInContainerBefore: (parentInstance, child, beforeChild) => insertBefore(parentInstance, child, beforeChild),
 
-  // This is where we mutate OL objects in the render phase
-  commitUpdate(
-    instance: any,
-    diff,
-    type,
-    oldProps: Record<string, unknown>,
-    newProps: Record<string, unknown>,
-    fiber: Reconciler.Fiber
-  ) {
+  commitUpdate(instance: any, diff, type, oldProps: Record<string, unknown>, newProps: Record<string, unknown>, fiber: Reconciler.Fiber) {
     applyProps(instance, newProps, oldProps);
+  },
+
+  commitTextUpdate(instance: any, oldText: string, newText: string) {
+    console.log(instance, newText, oldText);
   },
 
   hideInstance(instance: any) {},

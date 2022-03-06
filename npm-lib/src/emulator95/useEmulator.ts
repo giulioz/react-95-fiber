@@ -1,10 +1,7 @@
-import { useEffect, useRef, useState } from "react";
-import { EmulatorEvents, initEmulator } from "./emulator";
+import { useEffect, useRef, useState } from 'react';
+import { Binaries, EmulatorEvents, initEmulator } from './emulator';
 
-export function useEmulator(
-  screenContainer: HTMLDivElement,
-  events: EmulatorEvents
-) {
+export function useEmulator(screenContainer: HTMLDivElement, events: EmulatorEvents, binaries: Binaries) {
   const eventsRef = useRef<EmulatorEvents>(events);
   useEffect(() => void (eventsRef.current = events), [events]);
 
@@ -17,7 +14,7 @@ export function useEmulator(
       onEvent(str) {
         events.onEvent?.(str);
       },
-    })
+    }, binaries),
   )[0];
   const [ready, setReady] = useState(false);
 

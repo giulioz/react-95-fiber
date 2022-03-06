@@ -113,6 +113,12 @@ RemoteCommand parseRemoteCommand(char *buffer) {
   return RemoteCommand(header.type, header.nParams, params);
 }
 
+void InvalidCommandError(HWND hwnd, RemoteCommand command) {
+  char buffer[512] = {0};
+  sprintf(buffer, "Invalid command: %d", command.type);
+  MessageBoxEx(hwnd, buffer, "Error", MB_OK, NULL);
+}
+
 void runRemoteCommand(HWND hwnd, RemoteCommand command) {
   switch (command.type) {
   case Cmd_SetCursorPos:
@@ -148,22 +154,17 @@ void runRemoteCommand(HWND hwnd, RemoteCommand command) {
     break;
   case Cmd_Ping: {
     RemoteResponse msg = {Res_PingResponse, 0};
-    char buffer[9];
-    memcpy(buffer, (char *)&msg, 8);
-    buffer[8] = '\r';
-    SendData(buffer, 9);
+    SendData((char *)&msg, 8);
     break;
   }
   default:
-    MessageBoxEx(hwnd, "Invalid Command!", "Info", MB_OK, NULL);
+    InvalidCommandError(hwnd, command);
     break;
   }
 }
 
 int WINAPI WinMain(HINSTANCE hThisInstance, HINSTANCE hPrevInstance,
-                   LPSTR lpszArgument, int nFunsterStil)
-
-{
+                   LPSTR lpszArgument, int nFunsterStil) {
   HWND hwnd;        /* This is the handle for our window */
   MSG messages;     /* Here messages to the application are saved */
   WNDCLASSEX wincl; /* Data structure for the windowclass */
@@ -206,8 +207,6 @@ int WINAPI WinMain(HINSTANCE hThisInstance, HINSTANCE hPrevInstance,
 
   defaultFont = (HFONT)GetStockObject(DEFAULT_GUI_FONT);
 
-  SetupSerialPort(hwnd);
-
   ShowWindow(hwnd, nFunsterStil);
 
   while (messages.message != WM_QUIT) {
@@ -232,14 +231,10 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam,
   WindowMessageResponse wndMsg = {message, wParam, lParam};
   RemoteResponse msg = {Res_WinProc};
   msg.data.wndProc = wndMsg;
-  char buffer[17];
-  memcpy(buffer, (char *)&msg, 16);
-  buffer[16] = '\r';
-  SendData(buffer, 17);
+  SendData((char *)&msg, 16);
 
   switch (message) {
   case WM_DESTROY:
-    CloseSerialPort();
     PostQuitMessage(0);
     return 0;
 

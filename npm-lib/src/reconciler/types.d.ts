@@ -3,7 +3,7 @@ declare global {
   namespace JSX {
     interface IntrinsicElements {
       w95Window: {
-        type: "Button" | "Static" | "Edit";
+        type: 'Button' | 'Static' | 'Edit';
         text?: string;
         extStyle?: number;
         params: number;
