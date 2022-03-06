@@ -1,0 +1,110 @@
+{
+  "name": "react-95-fiber",
+  "version": "0.0.3",
+  "description": "Work in progress!",
+  "keywords": [],
+  "author": "Giulio Zausa (https://github.com/giulioz)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/giulioz/react-95-fiber/issues"
+  },
+  "homepage": "https://github.com/giulioz/react-95-fiber#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/giulioz/react-95-fiber.git"
+  },
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "sideEffects": true,
+  "scripts": {
+    "build": "rollup -c",
+    "prepublishOnly": "npm run build",
+    "eslint": "eslint src --fix --ext=js,ts,tsx,jsx",
+    "typecheck": "tsc --emitDeclarationOnly",
+    "test": "jest --coverage",
+    "vers": "yarn changeset version",
+    "release": "yarn build && yarn changeset publish",
+    "changeset:add": "changeset add"
+  },
+  "dependencies": {
+    "react-reconciler": "^0.26.2",
+    "scheduler": "^0.20.2",
+    "utility-types": "^3.10.0",
+    "v86-module": "^0.1.0"
+  },
+  "devDependencies": {
+    "@babel/core": "7.14.8",
+    "@babel/plugin-proposal-class-properties": "^7.10.4",
+    "@babel/plugin-transform-modules-commonjs": "7.15.0",
+    "@babel/plugin-transform-parameters": "7.14.5",
+    "@babel/plugin-transform-runtime": "7.15.0",
+    "@babel/plugin-transform-template-literals": "7.14.5",
+    "@babel/preset-env": "7.14.8",
+    "@babel/preset-react": "7.14.5",
+    "@babel/preset-typescript": "^7.14.5",
+    "@changesets/changelog-git": "^0.1.7",
+    "@changesets/cli": "^2.16.0",
+    "@react-spring/core": "^9.4.2",
+    "@rollup/plugin-babel": "^5.2.0",
+    "@rollup/plugin-commonjs": "^20.0.0",
+    "@rollup/plugin-json": "^4.1.0",
+    "@rollup/plugin-node-resolve": "^13.0.4",
+    "@types/jest": "^26.0.8",
+    "@types/node": "^16.4.13",
+    "@types/react": "^17.0.14",
+    "@types/react-dom": "^17.0.9",
+    "@types/react-reconciler": "^0.26.2",
+    "@types/scheduler": "^0.16.2",
+    "@typescript-eslint/eslint-plugin": "^4.28.4",
+    "@typescript-eslint/parser": "^4.28.4",
+    "babel-jest": "^27.3.1",
+    "eslint": "^7.31.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-import-resolver-alias": "^1.1.2",
+    "eslint-plugin-import": "^2.23.4",
+    "eslint-plugin-jest": "^24.3.6",
+    "eslint-plugin-prettier": "^3.4.0",
+    "eslint-plugin-react": "^7.24.0",
+    "eslint-plugin-react-hooks": "^4.2.0",
+    "husky": "^7.0.1",
+    "jest": "^27.0.6",
+    "lint-staged": "^11.0.1",
+    "prettier": "^2.3.2",
+    "pretty-quick": "^3.1.1",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "rimraf": "^3.0.2",
+    "rollup": "^2.26.10",
+    "rollup-plugin-filesize": "^9.1.1",
+    "rollup-plugin-terser": "^7.0.2",
+    "ts-jest": "^27.0.4",
+    "typescript": "^4.3.5"
+  },
+  "peerDependencies": {
+    "react": ">=17.0",
+    "react-dom": ">=17.0"
+  },
+  "peerDependenciesMeta": {
+    "react-dom": {
+      "optional": true
+    }
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
+  },
+  "files": [
+    "binaries/*",
+    "dist/*",
+    "src/*",
+    "LICENSE"
+  ]
+}
