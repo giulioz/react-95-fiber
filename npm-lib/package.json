@@ -1,6 +1,6 @@
 {
   "name": "react-95-fiber",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Work in progress!",
   "keywords": [],
   "author": "Giulio Zausa (https://github.com/giulioz)",
@@ -31,7 +31,7 @@
     "react-reconciler": "^0.26.2",
     "scheduler": "^0.20.2",
     "utility-types": "^3.10.0",
-    "v86-module": "^0.1.1"
+    "v86-module": "^0.1.2"
   },
   "devDependencies": {
     "@babel/core": "7.14.8",
