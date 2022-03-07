@@ -1,6 +1,6 @@
 #!/bin/sh
 
-cd /mnt/imgtool
+cd /mnt/tools/imgtool
 
 rm os.img
 dd if=/dev/zero of=os.img bs=32K count=1024
@@ -44,10 +44,10 @@ printf '\x64' | dd of=os.img bs=1 seek=32278 count=4 conv=notrunc
 # mformat -h 16 -s 63 -H 0 -c 4 -i "os.img@@32256" ::
 # dd conv=notrunc if=part_boot.img of=os.img obs=1 seek=32318
 
-for f in ../filesystem95/*;
+for f in ../../win-runtime/filesystem/*;
 do
   mcopy -i os.img@@32256 -s "$f" ::/;
 done
 
-# mcopy -i os.img@@32256 ::/WINDOWS/SYSTEM.DAT ../filesystem95/WINDOWS/SYSTEM.DAT
-# mcopy -i os.img@@32256 ::/WINDOWS/USER.DAT ../filesystem95/WINDOWS/USER.DAT
+# mcopy -i os.img@@32256 ::/WINDOWS/SYSTEM.DAT ../../win-runtime/filesystem/WINDOWS/SYSTEM.DAT
+# mcopy -i os.img@@32256 ::/WINDOWS/USER.DAT ../../win-runtime/filesystem/WINDOWS/USER.DAT

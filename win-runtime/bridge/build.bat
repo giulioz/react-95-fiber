@@ -1,3 +1,3 @@
 set PATH=%PATH%;Z:\opt\vc\BIN
-cd z:/prj/npm-lib/win-runtime
+cd z:/prj/win-runtime/bridge
 nmake
