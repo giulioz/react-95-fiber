@@ -63,17 +63,17 @@ enum CommandType {
 
 struct RemoteCommand {
   CommandType type;
-  uint32_t nParams;
+  unsigned int nParams;
   DataItem *params;
   RemoteCommand() : type(Cmd_Invalid), nParams(0), params(NULL) {}
-  RemoteCommand(CommandType type, uint32_t nParams, DataItem *params)
+  RemoteCommand(CommandType type, unsigned int nParams, DataItem *params)
       : type(type), nParams(nParams), params(params) {}
 };
 
 struct RemoteCommandHeader {
-  uint32_t magic; // 0xC0AD
+  unsigned int magic; // 0xC0AD
   CommandType type;
-  uint32_t nParams;
+  unsigned int nParams;
 };
 
 enum ResponseType {
@@ -89,7 +89,7 @@ struct WindowMessageResponse {
 };
 
 union RemoteResponseData {
-  uint32_t none;
+  unsigned int none;
   WindowMessageResponse wndProc;
 };
 
