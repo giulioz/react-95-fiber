@@ -1,10 +1,9 @@
 import ReactDOM from 'react-dom';
 import React, { useRef, useState } from 'react';
 
-// import v86WASMFn from 'v86-module/build/v86.wasm';
-// import seabios from 'v86-module/bios/seabios.bin?url';
-// import vgabios from 'v86-module/bios/vgabios.bin?url';
-import { v86WASM, seabios, vgabios } from 'v86-module/build/binaries';
+import v86WASMFn from 'v86-module/build/v86.wasm';
+import seabiosUrl from 'v86-module/bios/seabios.bin?url';
+import vgabiosUrl from 'v86-module/bios/vgabios.bin?url';
 import osImgUrl from '../../binaries/os.img?url';
 import { Win95, Win95Ref, Button, WS_VISIBLE, WS_CHILD, WS_EX_CLIENTEDGE, Binaries } from '../../src';
 
@@ -35,7 +34,7 @@ export function App({ binaries }: { binaries: Binaries }) {
 }
 
 async function main() {
-  const binaries = { v86WASM: await v86WASM, seabios: await seabios, vgabios: await vgabios, osImgUrl };
+  const binaries = { v86WASMFn, seabiosUrl, vgabiosUrl, osImgUrl };
   ReactDOM.render(<App binaries={binaries} />, document.getElementById('root'));
 }
 main();

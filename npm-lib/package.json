@@ -31,7 +31,7 @@
     "react-reconciler": "^0.26.2",
     "scheduler": "^0.20.2",
     "utility-types": "^3.10.0",
-    "v86-module": "^0.1.2"
+    "v86-module": "^0.2.0"
   },
   "devDependencies": {
     "@babel/core": "7.14.8",

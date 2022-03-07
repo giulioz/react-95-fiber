@@ -1,4 +1,4 @@
-import { V86Starter } from 'v86-module/src';
+import { V86Starter } from 'v86-module';
 import { CommBus } from './commBus';
 
 export enum CommandType {

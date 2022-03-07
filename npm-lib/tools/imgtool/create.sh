@@ -4,7 +4,7 @@ cd /mnt/imgtool
 
 rm os.img
 dd if=/dev/zero of=os.img bs=32K count=1024
-dd conv=notrunc if=clean_fat.img of=os.img
+dd conv=notrunc if=fat.img of=os.img
 
 # C=count/16.2
 # LBA=count*63.590625=count*32*1024/512

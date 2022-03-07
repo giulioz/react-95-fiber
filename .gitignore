@@ -5,8 +5,9 @@ devc++
 nano_root
 *.img
 !small.img
-!filesystem95/**/*
+!filesystem/**/*
 .DS_Store
 .parcel-cache
 dist
 build
+*.obj
