@@ -133,7 +133,7 @@ export function initEmulator(
 
   v86Emulator.add_listener('emulator-started', () => {
     v86Emulator.v86.cpu.devices.commBus = new CommBus(v86Emulator.v86.cpu, pkg => {
-      if (pkg.byteLength !== 16) return;
+      if (pkg.byteLength !== 8 && pkg.byteLength !== 16) return;
       events.onEvent?.(parseEventPayload(pkg));
 
       if (!emuState.ready) {
