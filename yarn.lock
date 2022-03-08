@@ -6741,10 +6741,10 @@ v8-to-istanbul@^8.1.0:
     convert-source-map "^1.6.0"
     source-map "^0.7.3"
 
-v86-module@^0.2.0:
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/v86-module/-/v86-module-0.2.0.tgz#4b98f047e14fafacd7c9687f78b19ce512cf42b6"
-  integrity sha512-pcTXv6K2NlpqznXA1AFgBsNVix6HqEma4mT5RoDAu3Yk6yEWLiazwAEvITpd+1WsYTOjLJOKRj1Yun4smghU/A==
+v86-module@^0.2.1:
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/v86-module/-/v86-module-0.2.1.tgz#d6f32d6f2341603379dfc4853bf50777ac773c15"
+  integrity sha512-0tEx11nicH9B4fLExBhl83syZk5ZG4sJqRFRiiTCLPNt47RZc5/Ugj27QremHkjiSQLV7pcs7HE0rQiblhm4Iw==
 
 validate-npm-package-license@^3.0.1:
   version "3.0.4"

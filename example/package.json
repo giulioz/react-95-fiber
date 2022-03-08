@@ -8,8 +8,7 @@
     "build": "vite build"
   },
   "dependencies": {
-    "use-asset": "^1.0.4",
-    "v86-module": "^0.2.0"
+    "use-asset": "^1.0.4"
   },
   "alias": {
     "react": "../node_modules/react",
