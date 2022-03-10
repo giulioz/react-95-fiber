@@ -52,12 +52,17 @@ enum CommandType {
 };
 
 struct RemoteCommand {
+  void *originalBuffer;
   CommandType type;
   unsigned int nParams;
   DataItem *params;
-  RemoteCommand() : type(Cmd_Invalid), nParams(0), params(NULL) {}
-  RemoteCommand(CommandType type, unsigned int nParams, DataItem *params)
-      : type(type), nParams(nParams), params(params) {}
+  RemoteCommand()
+      : originalBuffer(NULL), type(Cmd_Invalid), nParams(0), params(NULL) {}
+  RemoteCommand(void *originalBuffer, CommandType type, unsigned int nParams,
+                DataItem *params)
+      : originalBuffer(originalBuffer), type(type), nParams(nParams),
+        params(params) {}
+  RemoteCommand heapCopy(unsigned int size);
 };
 
 struct RemoteCommandHeader {
@@ -89,5 +94,6 @@ struct RemoteResponse {
 };
 
 RemoteCommand parseRemoteCommand(char *buffer);
+void deallocRemoteCommand(RemoteCommand &command);
 
 #endif
