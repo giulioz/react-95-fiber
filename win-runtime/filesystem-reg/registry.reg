@@ -5786,10 +5786,6 @@ REGEDIT4
 "StaticVxD"="*VWIN32"
 "Start"=hex:00
 
-[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\VxD\VFBACKUP]
-"StaticVxD"="*VFBACKUP"
-"Start"=hex:00
-
 [HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\VxD\VCOMM]
 "StaticVxD"="*VCOMM"
 "Start"=hex:00
