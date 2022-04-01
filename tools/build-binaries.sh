@@ -12,5 +12,5 @@ else
 fi
 
 docker run --rm -v $(pwd):/mnt w95-imgtool sh create.sh
-mv -f tools/imgtool/os.img binaries/os.img
 mkdir -p binaries
+mv -f tools/imgtool/os.img binaries/os.img
