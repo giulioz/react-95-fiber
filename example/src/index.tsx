@@ -1,9 +1,9 @@
 import ReactDOM from 'react-dom';
 import React, { useRef, useState } from 'react';
 
-import v86WASMFn from 'v86-module/build/v86.wasm';
-import seabiosUrl from 'v86-module/bios/seabios.bin?url';
-import vgabiosUrl from 'v86-module/bios/vgabios.bin?url';
+import v86WASMFn from 'v86/build/v86.wasm';
+import seabiosUrl from 'v86/bios/seabios.bin?url';
+import vgabiosUrl from 'v86/bios/vgabios.bin?url';
 import osImgUrl from '../../binaries/os.img?url';
 import { Win95, Win95Ref, Button, WS_VISIBLE, WS_CHILD, WS_EX_CLIENTEDGE, Binaries } from '../../src';
 

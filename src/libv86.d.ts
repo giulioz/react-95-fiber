@@ -30,7 +30,7 @@ type V86StarterOptions = {
   screen_container?: HTMLElement;
 };
 
-declare module 'v86-module' {
+declare module 'v86' {
   class V86Starter {
     constructor(options: V86StarterOptions);
 
