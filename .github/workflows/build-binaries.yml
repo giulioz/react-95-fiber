@@ -1,0 +1,38 @@
+name: Build binaries
+on:
+  push:
+    branches:
+      - 'main'
+  pull_request: {}
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Use Node ${{ matrix.node }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Install deps and build (with cache)
+        uses: bahmutov/npm-install@v1
+        with:
+          install-command: yarn --immutable --silent
+
+      - name: Build tools
+        run: tools/build-tools.sh
+
+      - name: Build binaries
+        run: tools/build-binaries.sh
+
+      - name: Build js
+        run: yarn build
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: binaries/os.img
