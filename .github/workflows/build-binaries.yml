@@ -32,7 +32,11 @@ jobs:
       - name: Build js
         run: yarn build
 
-      - name: Release
-        uses: softprops/action-gh-release@v1
+      - name: Release to GitHub
+        uses: marvinpinto/action-automatic-releases@latest
         with:
-          files: binaries/os.img
+          title: Latest Release
+          automatic_release_tag: latest
+          repo_token: '${{ secrets.GITHUB_TOKEN }}'
+          files: |
+            binaries/*
