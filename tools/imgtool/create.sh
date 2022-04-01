@@ -48,6 +48,3 @@ for f in ../../win-runtime/filesystem/*;
 do
   mcopy -i os.img@@32256 -s "$f" ::/;
 done
-
-# mcopy -i os.img@@32256 ::/WINDOWS/SYSTEM.DAT ../../win-runtime/filesystem/WINDOWS/SYSTEM.DAT
-# mcopy -i os.img@@32256 ::/WINDOWS/USER.DAT ../../win-runtime/filesystem/WINDOWS/USER.DAT
