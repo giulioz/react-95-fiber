@@ -7,6 +7,8 @@ import vgabiosUrl from 'v86/bios/vgabios.bin?url';
 import osImgUrl from '../../binaries/os.img?url';
 import { Win95, Win95Ref, Button, WS_VISIBLE, WS_CHILD, WS_EX_CLIENTEDGE, Binaries } from '../../src';
 
+import './style.css';
+
 export function App({ binaries }: { binaries: Binaries }) {
   const emulatorRef = useRef<Win95Ref>(null);
   (window as any).emulatorRef = emulatorRef;
@@ -15,10 +17,7 @@ export function App({ binaries }: { binaries: Binaries }) {
 
   return (
     <>
-      <button onClick={() => emulatorRef.current.state.v86Emulator.run()}>start</button>
-      <button onClick={() => emulatorRef.current.state.v86Emulator.restart()}>restart</button>
-
-      <Win95 ref={emulatorRef} binaries={binaries}>
+      <Win95 ref={emulatorRef} binaries={binaries} className='w95Window'>
         <w95Window type='Edit' params={WS_VISIBLE | WS_CHILD} extStyle={WS_EX_CLIENTEDGE} x={10} y={10} w={80} h={20}>
           {result}
         </w95Window>
@@ -29,6 +28,11 @@ export function App({ binaries }: { binaries: Binaries }) {
           </Button>
         ))}
       </Win95>
+
+      <div className='controls'>
+        <button onClick={() => emulatorRef.current.state.v86Emulator.run()}>Start</button>
+        <button onClick={() => emulatorRef.current.state.v86Emulator.restart()}>Restart</button>
+      </div>
     </>
   );
 }

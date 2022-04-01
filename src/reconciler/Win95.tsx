@@ -90,7 +90,7 @@ export function unmountComponentAtNode(rootDiv: HTMLDivElement) {
 }
 
 export const Win95 = forwardRef<Win95Ref, PropsWithChildren<HTMLAttributes<HTMLDivElement> & Win95Props>>(function Win95(
-  { children, style, onReady, binaries },
+  { children, style, onReady, binaries, ...rest },
   ref,
 ) {
   const emulatorDivRef = useRef<HTMLDivElement>(null);
@@ -120,6 +120,7 @@ export const Win95 = forwardRef<Win95Ref, PropsWithChildren<HTMLAttributes<HTMLD
       onMouseMove={handleMouseMove}
       onMouseDown={e => emulatorRef.current.api.sendMouseEvent(true, e.button as 0 | 2)}
       onMouseUp={e => emulatorRef.current.api.sendMouseEvent(false, e.button as 0 | 2)}
+      {...rest}
     >
       <div
         style={{

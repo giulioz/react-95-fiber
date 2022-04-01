@@ -9,7 +9,7 @@ export function shallowCompare(a: any, b: any) {
 
 export const pascalCase = <T extends string>(str: T) => (str.charAt(0).toUpperCase() + str.substring(1)) as Capitalize<T>;
 
-export function pruneKeys<T>(obj: T, ...keys: string[][]) {
+export function pruneKeys<T extends {}>(obj: T, ...keys: string[][]) {
   const keysToRemove = new Set(keys.flat());
 
   return Object.fromEntries(Object.entries(obj).filter(([key]) => !keysToRemove.has(key)));

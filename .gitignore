@@ -28,3 +28,4 @@ win-runtime/filesystem/**/bridge.exe
 win-runtime/filesystem/**/SYSTEM.DAT
 win-runtime/filesystem/**/USER.DAT
 .vscode
+vc6

@@ -1,0 +1,33 @@
+html,
+body {
+  margin: 0;
+  background-color: rgb(10, 128, 128);
+  font-family: sans-serif;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 16px;
+}
+
+.w95Window {
+  border: 1px solid black;
+}
+
+.controls {
+  margin: 16px 0;
+  display: flex;
+  gap: 8px;
+}
+
+.controls button {
+  background-color: #ffffffaa;
+  color: inherit;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  text-transform: uppercase;
+  border-radius: 4px;
+}
