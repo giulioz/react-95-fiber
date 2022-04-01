@@ -5,8 +5,7 @@
   "license": "MIT",
   "scripts": {
     "start": "vite",
-    "build": "vite build",
-    "vercel-build": "./vercel-build.sh"
+    "build": "vite build"
   },
   "dependencies": {
     "use-asset": "^1.0.4"
