@@ -39,7 +39,6 @@ void spoolRemoteCommandUI() {
                  command.params[4].dt_int.value, SWP_NOZORDER);
     break;
   case Cmd_CreateWindow:
-
     handles[hwndI] = CreateWindowEx(
         command.params[1].dt_uint.value, command.params[2].dt_string.value,
         command.params[3].dt_string.value, command.params[4].dt_uint.value,
@@ -109,10 +108,6 @@ LRESULT CALLBACK wndProc(HWND hwnd, UINT message, WPARAM wParam,
   SendData((char *)&msg, 16);
 
   switch (message) {
-    // case WM_DESTROY:
-    //   PostQuitMessage(0);
-    //   return 0;
-
   default:
     return DefWindowProc(hwnd, message, wParam, lParam);
   }
@@ -153,26 +148,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
   defaultFont = (HFONT)GetStockObject(DEFAULT_GUI_FONT);
 
   RegisterWindowClass(hInstance, szClassName);
-
-  HWND hwnd =
-      CreateWindowEx(0,             /* Extended possibilites for variation */
-                     szClassName,   /* Classname */
-                     "Windows App", /* Title Text */
-                     WS_VISIBLE | WS_OVERLAPPEDWINDOW, /* default window */
-                     CW_USEDEFAULT, /* Windows decides the position */
-                     CW_USEDEFAULT, /* where the window ends up on the screen */
-                     544,           /* The programs width */
-                     375,           /* and height in pixels */
-                     HWND_DESKTOP, /* The window is a child-window to desktop */
-                     NULL,         /* No menu */
-                     hInstance,    /* Program Instance handler */
-                     NULL          /* No Window Creation data */
-      );
-  handles[0] = hwnd;
-
-  defaultFont = (HFONT)GetStockObject(DEFAULT_GUI_FONT);
-
-  // ShowWindow(hwnd, nShowCmd);
 
   MSG messages = {0};
   while (messages.message != WM_QUIT) {

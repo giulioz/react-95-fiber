@@ -19,30 +19,20 @@ type NodeType =
             y: number;
             w: number;
             h: number;
+            menuId?: number;
             onCommand?: () => void;
           };
         }
-    ) & { root: RootNode };
+    ) & { root: RootNode; children?: NodeType[] };
 
 let incremental = 3;
 function getIncremental() {
   return incremental++;
 }
 
-function createInstance(type: string, { type: windowType, ...props }: any, rootContainer: any) {
-  return {
-    type: type,
-    props: { windowType, ...props },
-    id: getIncremental(),
-    root: rootContainer.root,
-  };
-}
-
-function createTextInstance(newText: string, rootContainerInstance: RootNode) {
-  return { type: 'text', content: newText };
-}
-
 function appendChild(parentInstance: NodeType, child: NodeType) {
+  console.log('appendChild', { parentInstance, child });
+
   if (child.type === 'w95Window' && parentInstance.type !== 'text') {
     child.root.api.createWindow({
       id: child.id,
@@ -53,18 +43,21 @@ function appendChild(parentInstance: NodeType, child: NodeType) {
       y: child.props.y,
       w: child.props.w,
       h: child.props.h,
-      parentId: parentInstance.id,
-      menuId: child.id,
+      parentId: parentInstance.id || 0,
+      menuId: child.props.menuId !== undefined ? child.props.menuId : child.id || 0,
       extStyle: child.props.extStyle || 0,
     });
     if (child.props.onCommand) {
       child.root.events.set(child.id, child.props.onCommand);
     }
   }
+}
 
-  if (child.type === 'text' && parentInstance.type === 'w95Window') {
-    parentInstance.props.text = child.content;
-  }
+function appendChildToContainer(parentInstance: NodeType, child: NodeType) {
+  console.log('appendChildToContainer', { parentInstance, child });
+
+  appendChild(parentInstance, child);
+  child.children?.forEach(c => appendChildToContainer(child, c));
 }
 
 function removeChild(parentInstance: NodeType, child: NodeType) {
@@ -74,79 +67,96 @@ function removeChild(parentInstance: NodeType, child: NodeType) {
   }
 }
 
-function insertBefore(parentInstance: NodeType, child: NodeType, beforeChild: NodeType) {
-  console.log('insertBefore', { parentInstance, child, beforeChild });
-}
-
-function applyProps(instance: NodeType, newProps: any, oldProps: any) {
-  console.log('applyProps', { instance, newProps, oldProps });
-}
-
 export const reconciler = Reconciler({
-  supportsMutation: true,
-
-  // We set this to false because this can work on top of react-dom
-  isPrimaryRenderer: false,
-
-  // We can modify the ref here, but we return it instead (no-op)
-  getPublicInstance: instance => instance,
-
-  // This object that's passed into the reconciler is the host context.
-  // We don't need to expose it though
+  getPublicInstance: i => i,
   getRootHostContext: () => ({}),
   getChildHostContext: () => ({}),
-
-  prepareUpdate(instance: NodeType, type: string, oldProps: any, newProps: any) {
-    return true;
-  },
-
   prepareForCommit: () => null,
   resetAfterCommit: () => ({}),
-
-  shouldSetTextContent: (type: string, props: any) => false,
-
-  // We can mutate objects once they're assembled into the scene graph here.
-  // applyProps removes the need for this though
-  finalizeInitialChildren: () => false,
-
-  // This can modify the container and clear children.
-  // Might be useful for disposing on demand later
-  clearContainer: () => false,
-
-  // This is where we'll create an element from a React element
-  createInstance,
-  createTextInstance,
-
-  // These methods add elements to the scene
-  appendChild,
-  appendInitialChild: appendChild,
-  appendChildToContainer: appendChild,
-
-  // These methods remove elements from the scene
-  removeChild,
-  removeChildFromContainer: removeChild,
-
-  insertBefore,
-
-  insertInContainerBefore: (parentInstance, child, beforeChild) => insertBefore(parentInstance, child, beforeChild),
-
-  commitUpdate(instance: any, diff, type, oldProps: Record<string, unknown>, newProps: Record<string, unknown>, fiber: Reconciler.Fiber) {
-    applyProps(instance, newProps, oldProps);
-  },
-
-  commitTextUpdate(instance: any, oldText: string, newText: string) {
-    console.log(instance, newText, oldText);
-  },
-
-  hideInstance(instance: any) {},
-  unhideInstance(instance: any, props: Record<string, unknown>) {},
-  hideTextInstance() {},
-
-  supportsPersistence: false,
-  supportsHydration: false,
-  preparePortalMount() {},
-  now,
   scheduleTimeout: setTimeout,
   cancelTimeout: clearTimeout,
   noTimeout: -1,
+  now,
+  isPrimaryRenderer: false,
+  supportsMutation: true,
+  supportsPersistence: false,
+  supportsHydration: false,
+  preparePortalMount: () => {},
+  hideInstance: () => {},
+  hideTextInstance: () => {},
+  unhideInstance: () => {},
+  unhideTextInstance: () => {},
+  clearContainer: () => false,
+
+  createInstance(type: string, { type: windowType, ...props }: any, rootContainer: any) {
+    return {
+      type: type as any,
+      props: { windowType, ...props },
+      id: getIncremental(),
+      root: rootContainer.root,
+    };
+  },
+  createTextInstance(newText: string, rootContainerInstance: RootNode) {
+    return { type: 'text', content: newText };
+  },
+
+  appendInitialChild(parentInstance: NodeType, child: NodeType) {
+    console.log('appendInitialChild', { parentInstance, child });
+    if (child.type === 'text' && parentInstance.type === 'w95Window') {
+      parentInstance.props.text = child.content;
+    } else {
+      parentInstance.children = parentInstance.children || [];
+      parentInstance.children.push(child);
+    }
+  },
+
+  // We can mutate objects once they're assembled into the scene graph here.
+  // applyProps removes the need for this though
+  finalizeInitialChildren(instance, type, props) {
+    // console.log('finalizeInitialChildren', { instance, type, props });
+    return false;
+  },
+
+  prepareUpdate: (instance: NodeType, type: string, oldProps: any, newProps: any) => {
+    console.log('prepareUpdate', { instance, type, oldProps, newProps });
+    return true;
+  },
+
+  shouldSetTextContent: (type: string, props: any) => {
+    // console.log('shouldSetTextContent', { type, props });
+    return false;
+  },
+
+  // -------------------
+  //      Mutation
+  //     (optional)
+  // -------------------
+  appendChild,
+  appendChildToContainer,
+
+  commitTextUpdate(instance: NodeType, oldText: string, newText: string) {
+    console.log('commitTextUpdate', { instance, oldText, newText });
+  },
+
+  commitMount: p => console.log('commitMount', p),
+
+  commitUpdate(instance: NodeType, diff, type, oldProps: Record<string, unknown>, newProps: Record<string, unknown>, fiber: Reconciler.Fiber) {
+    console.log('commitUpdate', { instance, diff, type, oldProps, newProps, fiber });
+
+    if (instance.type === 'w95Window') {
+      if (typeof newProps.children === 'string' && newProps.children !== oldProps.children) {
+        instance.root.api.setWindowText(instance.id, newProps.children);
+      } else if (newProps.x !== oldProps.x || newProps.y !== oldProps.y || newProps.w !== oldProps.w || newProps.h !== oldProps.h) {
+        instance.root.api.setWindowPos(instance.id, newProps.x, newProps.y, newProps.w, newProps.h);
+      }
+    }
+  },
+
+  insertBefore: p => console.log('insertBefore', p),
+  insertInContainerBefore: (parentInstance, child, beforeChild) => console.log('insertInContainerBefore', { parentInstance, child, beforeChild }),
+
+  removeChild: p => console.log('removeChild', p),
+  removeChildFromContainer: p => console.log('removeChildFromContainer', p),
+
+  resetTextContent: p => console.log('resetTextContent', p),
 });

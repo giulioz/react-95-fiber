@@ -293,3 +293,5 @@ export const WS_EX_TOOLWINDOW = 128;
 export const WS_EX_TOPMOST = 8;
 export const WS_EX_TRANSPARENT = 32;
 export const WS_EX_WINDOWEDGE = 256;
+
+export const CW_USEDEFAULT = 0x80000000;
