@@ -128,7 +128,7 @@ export function initEmulator(
     memory_size: 32 * 1024 * 1024,
     disable_mouse: true,
     // disable_keyboard: true,
-    autostart: options.fromState,
+    autostart: options.fromState || true,
   });
 
   v86Emulator.add_listener('emulator-started', () => {
