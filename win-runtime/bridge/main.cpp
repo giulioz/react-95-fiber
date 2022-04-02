@@ -1,6 +1,7 @@
 #include <iostream>
 #include <map>
 #include <queue>
+#include <stdlib.h>
 #include <string>
 #include <vector>
 #include <windows.h>
@@ -16,9 +17,15 @@ CRITICAL_SECTION commandsQueueMutex;
 std::queue<RemoteCommand> commandsQueue;
 
 void InvalidCommandError(RemoteCommand &command) {
-  char buffer[512] = {0};
-  sprintf(buffer, "Invalid command: %d", command.type);
-  MessageBoxEx(NULL, buffer, "Error", MB_OK, NULL);
+  char hexBuffer[2048] = {0};
+  for (int i = 0; i < command.originalSize; i++) {
+    sprintf(&hexBuffer[i * 2], "%02X", ((char *)command.originalBuffer)[i]);
+  }
+
+  char msgBuffer[4096] = {0};
+  sprintf(msgBuffer, "Invalid command %d with %d params: %s", command.type,
+          command.nParams, hexBuffer);
+  MessageBoxEx(NULL, msgBuffer, "Error", MB_OK, NULL);
 }
 
 void spoolRemoteCommandUI() {
@@ -59,7 +66,7 @@ void spoolRemoteCommandUI() {
     break;
 
   case Cmd_GetWindowText: {
-    const int strLength = 128;
+    const int strLength = 1024;
     char textBuff[strLength];
     GetWindowText(handles[hwndI], textBuff, strLength);
 
@@ -82,8 +89,7 @@ void spoolRemoteCommandUI() {
   deallocRemoteCommand(command);
 }
 
-void processRemoteCommand(RemoteCommand &command, char *buffer,
-                          unsigned int size) {
+void processRemoteCommand(RemoteCommand &command) {
   switch (command.type) {
   case Cmd_SetCursorPos:
     SetCursorPos(command.params[0].dt_uint.value,
@@ -98,7 +104,7 @@ void processRemoteCommand(RemoteCommand &command, char *buffer,
     break;
   }
   default: {
-    RemoteCommand copy = command.heapCopy(size);
+    RemoteCommand copy = command.heapCopy();
 
     EnterCriticalSection(&commandsQueueMutex);
     commandsQueue.push(copy);
@@ -113,8 +119,8 @@ DWORD WINAPI ReceiverThreadFunc(void *data) {
     char buffer[4096] = {0};
     unsigned long readt = RecieveData(buffer);
     if (readt >= sizeof(RemoteCommandHeader)) {
-      RemoteCommand cmd = parseRemoteCommand(buffer);
-      processRemoteCommand(cmd, buffer, readt);
+      RemoteCommand cmd = parseRemoteCommand(buffer, readt);
+      processRemoteCommand(cmd);
     }
   }
   return 0;

@@ -1,6 +1,6 @@
 #include "RemoteCommand.h"
 
-RemoteCommand parseRemoteCommand(char *buffer) {
+RemoteCommand parseRemoteCommand(char *buffer, unsigned int size) {
   RemoteCommandHeader header = *(RemoteCommandHeader *)buffer;
   if (header.magic != 0xC0AD) {
     return RemoteCommand();
@@ -12,7 +12,7 @@ RemoteCommand parseRemoteCommand(char *buffer) {
       params[i].dt_string.value = buffer + params[i].dt_uint.value;
     }
   }
-  return RemoteCommand(buffer, header.type, header.nParams, params);
+  return RemoteCommand(buffer, size, header.type, header.nParams, params);
 }
 
 void deallocRemoteCommand(RemoteCommand &command) {
@@ -21,7 +21,7 @@ void deallocRemoteCommand(RemoteCommand &command) {
   }
 }
 
-RemoteCommand RemoteCommand::heapCopy(unsigned int size) {
+RemoteCommand RemoteCommand::heapCopy() {
   for (size_t i = 0; i < nParams; i++) {
     if (params[i].type == String) {
       // Unrelocate strings
@@ -30,7 +30,7 @@ RemoteCommand RemoteCommand::heapCopy(unsigned int size) {
     }
   }
 
-  char *bufferCopy = new char[size];
-  memcpy(bufferCopy, this->originalBuffer, size);
-  return parseRemoteCommand(bufferCopy);
+  char *bufferCopy = new char[originalSize];
+  memcpy(bufferCopy, originalBuffer, originalSize);
+  return parseRemoteCommand(bufferCopy, originalSize);
 }

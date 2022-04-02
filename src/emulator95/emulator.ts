@@ -93,10 +93,12 @@ export type EventPayload =
   | { type: ResponseType.Res_Ping }
   | { type: ResponseType.Res_Invalid };
 
-function parseEventPayload(data: ArrayBuffer): EventPayload {
+function parseEventPayload(data: ArrayBuffer): EventPayload | null {
+  if (data.byteLength < 4) return null;
   const dv = new DataView(data);
   const type = dv.getUint32(0, true) as ResponseType;
   if (type === ResponseType.Res_WinProc) {
+    if (data.byteLength !== 16) return null;
     return {
       type,
       message: dv.getUint32(4, true),
@@ -104,6 +106,7 @@ function parseEventPayload(data: ArrayBuffer): EventPayload {
       lParam: dv.getInt32(12, true),
     };
   } else if (type === ResponseType.Res_CmdOutput) {
+    if (data.byteLength !== 12 + dv.getUint32(8, true)) return null;
     return {
       type,
       seq: dv.getUint32(4, true),
@@ -137,12 +140,7 @@ function wrapWasm(wasmAB: ArrayBuffer) {
 
 export type EmulatorAPI = ReturnType<typeof initEmulator>['api'];
 
-export function initEmulator(
-  screenContainer: HTMLDivElement,
-  events: EmulatorEvents,
-  binaries: Binaries,
-  options = { scale: 0.5, mouseUpdateInterval: 20, fromState: false },
-) {
+export function initEmulator(screenContainer: HTMLDivElement, events: EmulatorEvents, binaries: Binaries, options = { scale: 0.5, fromState: false }) {
   const v86Emulator = new V86Starter({
     screen_container: screenContainer,
     wasm_fn: binaries.v86WASM ? wrapWasm(binaries.v86WASM) : binaries.v86WASMFn,
@@ -159,9 +157,9 @@ export function initEmulator(
 
   v86Emulator.add_listener('emulator-started', () => {
     v86Emulator.v86.cpu.devices.commBus = new CommBus(v86Emulator.v86.cpu, pkg => {
-      // if (pkg.byteLength !== 8 && pkg.byteLength !== 16) return;
-
       const parsed = parseEventPayload(pkg);
+      if (!parsed) return;
+
       events.onEvent?.(parsed);
       if (parsed.type === ResponseType.Res_CmdOutput && seqListeners.has(parsed.seq)) {
         seqListeners.get(parsed.seq)?.(parsed);

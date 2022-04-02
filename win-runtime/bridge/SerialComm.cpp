@@ -1,9 +1,9 @@
 #include "SerialComm.h"
-#include <string.h>
 #include <conio.h>
+#include <string.h>
 
 const unsigned short COMMBUS_PORT_IN = 0x500;
-const unsigned short COMMBUS_PORT_OUT = 0x502;
+const unsigned short COMMBUS_PORT_OUT = 0x504;
 
 // GCC versions
 
@@ -29,22 +29,22 @@ const unsigned short COMMBUS_PORT_OUT = 0x502;
 
 void SendData(const char *data, unsigned long length) {
   for (unsigned long i = 0; i < length; i++) {
-    unsigned short temp = data[i];
-    temp |= (length - i) << 8;
-    _outpw(COMMBUS_PORT_OUT, temp);
+    unsigned long temp = data[i] & 0xFF;
+    temp |= ((length - i) << 8);
+    _outpd(COMMBUS_PORT_OUT, temp);
   }
-  _outpw(COMMBUS_PORT_OUT, 0);
+  _outpd(COMMBUS_PORT_OUT, 0);
 }
 
 unsigned long RecieveData(char *buffer) {
   int i = 0;
-  unsigned short temp = _inpw(COMMBUS_PORT_IN);
+  unsigned long temp = _inpd(COMMBUS_PORT_IN);
   char readData = temp & 0xFF;
-  char avail = temp >> 8;
+  unsigned long avail = temp >> 8;
   while (avail > 0) {
     buffer[i] = readData;
 
-    temp = _inpw(COMMBUS_PORT_IN);
+    temp = _inpd(COMMBUS_PORT_IN);
     readData = temp & 0xFF;
     avail = temp >> 8;
     i++;

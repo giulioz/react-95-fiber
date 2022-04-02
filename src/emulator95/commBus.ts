@@ -1,4 +1,4 @@
-export const COMMBUS_PORT_IN = 0x502;
+export const COMMBUS_PORT_IN = 0x504;
 export const COMMBUS_PORT_OUT = 0x500;
 
 export class CommBus {
@@ -10,6 +10,7 @@ export class CommBus {
       COMMBUS_PORT_IN,
       this,
       () => console.warn('Invalid 8 bit write!'),
+      () => console.warn('Invalid 16 bit write!'),
       (pkg: number) => {
         const byte = pkg & 0xff;
         const avail = pkg >> 8;
@@ -30,13 +31,17 @@ export class CommBus {
         return 0;
       },
       () => {
+        console.warn('Invalid 16 bit read!');
+        return 0;
+      },
+      () => {
         const toSend = (this.outQueue[0]?.length > 0 && this.outQueue[0]) || this.outQueue.shift();
         if (!toSend) return 0;
 
         const byte = toSend.shift();
         if (byte === undefined) return 0;
 
-        return byte | (Math.min(255, toSend.length + 1) << 8);
+        return byte | ((toSend.length + 1) << 8);
       },
     );
   }

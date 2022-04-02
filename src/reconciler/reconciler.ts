@@ -155,8 +155,8 @@ export const reconciler = Reconciler({
   insertBefore: p => console.log('insertBefore', p),
   insertInContainerBefore: (parentInstance, child, beforeChild) => console.log('insertInContainerBefore', { parentInstance, child, beforeChild }),
 
-  removeChild: p => console.log('removeChild', p),
-  removeChildFromContainer: p => console.log('removeChildFromContainer', p),
+  removeChild,
+  removeChildFromContainer: removeChild,
 
   resetTextContent: p => console.log('resetTextContent', p),
 });
