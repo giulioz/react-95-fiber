@@ -3,6 +3,7 @@ declare global {
   namespace JSX {
     interface IntrinsicElements {
       w95Window: {
+        ref?: React.Ref<{ id: number } | null | undefined>;
         type: 'Button' | 'Static' | 'Edit' | 'WindowsApp';
         text?: string;
         extStyle?: number;

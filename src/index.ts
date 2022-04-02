@@ -9,3 +9,5 @@ export * from './components/Button';
 export * from './components/Window';
 export * from './components/Edit';
 export * from './components/Label';
+export * from './components/Icon';
+export * from './components/Checkbox';

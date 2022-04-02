@@ -118,7 +118,7 @@ export const reconciler = Reconciler({
   },
 
   prepareUpdate: (instance: NodeType, type: string, oldProps: any, newProps: any) => {
-    console.log('prepareUpdate', { instance, type, oldProps, newProps });
+    // console.log('prepareUpdate', { instance, type, oldProps, newProps });
     return true;
   },
 

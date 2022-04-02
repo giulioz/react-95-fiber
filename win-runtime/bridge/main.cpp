@@ -70,14 +70,39 @@ void spoolRemoteCommandUI() {
     char textBuff[strLength];
     GetWindowText(handles[hwndI], textBuff, strLength);
 
-    CommandResponse cmdMsg = {command.params[1].dt_uint.value, strLength};
-    RemoteResponse msg = {Res_CmdOutput};
-    msg.data.cmd = cmdMsg;
+    CommandResponseLong cmdMsg = {command.params[1].dt_uint.value, strLength};
+    RemoteResponse msg = {Res_CmdOutputLong};
+    msg.data.cmdLong = cmdMsg;
 
-    char finalBuff[strLength + sizeof(CommandResponse) + 4];
-    memcpy(finalBuff, &msg, sizeof(CommandResponse) + 4);
-    memcpy(finalBuff + sizeof(CommandResponse) + 4, textBuff, strLength);
-    SendData(finalBuff, strLength + sizeof(CommandResponse) + 4);
+    char finalBuff[strLength + sizeof(CommandResponseLong) + 4];
+    memcpy(finalBuff, &msg, sizeof(CommandResponseLong) + 4);
+    memcpy(finalBuff + sizeof(CommandResponseLong) + 4, textBuff, strLength);
+    SendData(finalBuff, strLength + sizeof(CommandResponseLong) + 4);
+    break;
+  }
+
+  case Cmd_ExtractIcon: {
+    HICON handle = ExtractIcon(NULL, command.params[1].dt_string.value,
+                               command.params[2].dt_uint.value);
+    CommandResponseHandle cmdMsg = {hwndI, (unsigned int)handle};
+    RemoteResponse msg = {Res_CmdOutputHandle};
+    msg.data.cmdHandle = cmdMsg;
+    SendData((char *)(&msg), 12);
+    break;
+  }
+
+  case Cmd_DestroyIcon:
+    DestroyIcon((HICON)hwndI);
+    break;
+
+  case Cmd_SendMessage: {
+    LRESULT result = SendMessage(
+        handles[hwndI], command.params[1].dt_uint.value,
+        command.params[2].dt_uint.value, command.params[3].dt_int.value);
+    CommandResponseHandle cmdMsg = {command.params[4].dt_uint.value, result};
+    RemoteResponse msg = {Res_CmdOutputHandle};
+    msg.data.cmdHandle = cmdMsg;
+    SendData((char *)(&msg), 12);
     break;
   }
 

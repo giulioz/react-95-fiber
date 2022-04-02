@@ -15,6 +15,9 @@ export enum CommandType {
   Cmd_GetWindowText = 7,
   Cmd_MessageBoxEx = 8,
   Cmd_Ping = 9,
+  Cmd_ExtractIcon = 10,
+  Cmd_DestroyIcon = 11,
+  Cmd_SendMessage = 12,
 }
 
 export enum DataType {
@@ -74,7 +77,8 @@ export enum ResponseType {
   Res_Invalid = 0,
   Res_Ping = 1,
   Res_WinProc = 2,
-  Res_CmdOutput = 3,
+  Res_CmdOutputHandle = 3,
+  Res_CmdOutputLong = 4,
 }
 
 export type EventPayload =
@@ -85,7 +89,12 @@ export type EventPayload =
       lParam: number;
     }
   | {
-      type: ResponseType.Res_CmdOutput;
+      type: ResponseType.Res_CmdOutputHandle;
+      seq: number;
+      handle: number;
+    }
+  | {
+      type: ResponseType.Res_CmdOutputLong;
       seq: number;
       length: number;
       data: ArrayBuffer;
@@ -105,7 +114,14 @@ function parseEventPayload(data: ArrayBuffer): EventPayload | null {
       wParam: dv.getUint32(8, true),
       lParam: dv.getInt32(12, true),
     };
-  } else if (type === ResponseType.Res_CmdOutput) {
+  } else if (type === ResponseType.Res_CmdOutputHandle) {
+    if (data.byteLength !== 12) return null;
+    return {
+      type,
+      seq: dv.getUint32(4, true),
+      handle: dv.getUint32(8, true),
+    };
+  } else if (type === ResponseType.Res_CmdOutputLong) {
     if (data.byteLength !== 12 + dv.getUint32(8, true)) return null;
     return {
       type,
@@ -161,7 +177,7 @@ export function initEmulator(screenContainer: HTMLDivElement, events: EmulatorEv
       if (!parsed) return;
 
       events.onEvent?.(parsed);
-      if (parsed.type === ResponseType.Res_CmdOutput && seqListeners.has(parsed.seq)) {
+      if ((parsed.type === ResponseType.Res_CmdOutputHandle || parsed.type === ResponseType.Res_CmdOutputLong) && seqListeners.has(parsed.seq)) {
         seqListeners.get(parsed.seq)?.(parsed);
         seqListeners.delete(parsed.seq);
       }
@@ -260,16 +276,58 @@ export function initEmulator(screenContainer: HTMLDivElement, events: EmulatorEv
     },
 
     getWindowText(id: number) {
-      return new Promise(resolve => {
+      return new Promise<string>(resolve => {
         const seq = getSeqNumber();
         seqListeners.set(seq, e => {
-          if (e.type === ResponseType.Res_CmdOutput) {
+          if (e.type === ResponseType.Res_CmdOutputLong) {
             resolve(decoder.decode(e.data).split('\0')[0]);
           }
         });
         sendSerial(
           buildRemoteCommand(CommandType.Cmd_GetWindowText, [
             { type: DataType.UInt, value: id },
+            { type: DataType.UInt, value: seq },
+          ]),
+        );
+      });
+    },
+
+    extractIcon(file: string, id: number) {
+      return new Promise<number>(resolve => {
+        const seq = getSeqNumber();
+        seqListeners.set(seq, e => {
+          if (e.type === ResponseType.Res_CmdOutputHandle) {
+            resolve(e.handle);
+          }
+        });
+        sendSerial(
+          buildRemoteCommand(CommandType.Cmd_ExtractIcon, [
+            { type: DataType.UInt, value: seq },
+            { type: DataType.String, value: file },
+            { type: DataType.UInt, value: id },
+          ]),
+        );
+      });
+    },
+
+    destroyIcon(handle: number) {
+      sendSerial(buildRemoteCommand(CommandType.Cmd_DestroyIcon, [{ type: DataType.UInt, value: handle }]));
+    },
+
+    sendMessage(id: number, msg: number, wParam: number, lParam: number) {
+      return new Promise<number>(resolve => {
+        const seq = getSeqNumber();
+        seqListeners.set(seq, e => {
+          if (e.type === ResponseType.Res_CmdOutputHandle) {
+            resolve(e.handle);
+          }
+        });
+        sendSerial(
+          buildRemoteCommand(CommandType.Cmd_SendMessage, [
+            { type: DataType.UInt, value: id },
+            { type: DataType.UInt, value: msg },
+            { type: DataType.UInt, value: wParam },
+            { type: DataType.Int, value: lParam },
             { type: DataType.UInt, value: seq },
           ]),
         );
