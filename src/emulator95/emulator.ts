@@ -1,6 +1,9 @@
 import { V86Starter } from 'v86';
 import { CommBus } from './commBus';
 
+const encoder = new TextEncoder();
+const decoder = new TextDecoder();
+
 export enum CommandType {
   Cmd_Invalid = 0,
   Cmd_SetCursorPos = 1,
@@ -9,8 +12,9 @@ export enum CommandType {
   Cmd_CreateWindow = 4,
   Cmd_DestroyWindow = 5,
   Cmd_SetWindowText = 6,
-  Cmd_MessageBoxEx = 7,
-  Cmd_Ping = 8,
+  Cmd_GetWindowText = 7,
+  Cmd_MessageBoxEx = 8,
+  Cmd_Ping = 9,
 }
 
 export enum DataType {
@@ -58,10 +62,19 @@ export interface EmulatorState {
   ready: boolean;
 }
 
+let seqNumber = 0;
+function getSeqNumber() {
+  const s = seqNumber;
+  seqNumber = (seqNumber + 1) & 0xffffff;
+  return s;
+}
+const seqListeners = new Map<number, (e: EventPayload) => void>();
+
 export enum ResponseType {
   Res_Invalid = 0,
-  Res_PingResponse = 1,
+  Res_Ping = 1,
   Res_WinProc = 2,
+  Res_CmdOutput = 3,
 }
 
 export type EventPayload =
@@ -71,7 +84,13 @@ export type EventPayload =
       wParam: number;
       lParam: number;
     }
-  | { type: ResponseType.Res_PingResponse }
+  | {
+      type: ResponseType.Res_CmdOutput;
+      seq: number;
+      length: number;
+      data: ArrayBuffer;
+    }
+  | { type: ResponseType.Res_Ping }
   | { type: ResponseType.Res_Invalid };
 
 function parseEventPayload(data: ArrayBuffer): EventPayload {
@@ -83,6 +102,13 @@ function parseEventPayload(data: ArrayBuffer): EventPayload {
       message: dv.getUint32(4, true),
       wParam: dv.getUint32(8, true),
       lParam: dv.getInt32(12, true),
+    };
+  } else if (type === ResponseType.Res_CmdOutput) {
+    return {
+      type,
+      seq: dv.getUint32(4, true),
+      length: dv.getUint32(8, true),
+      data: data.slice(12),
     };
   } else {
     return { type };
@@ -133,8 +159,14 @@ export function initEmulator(
 
   v86Emulator.add_listener('emulator-started', () => {
     v86Emulator.v86.cpu.devices.commBus = new CommBus(v86Emulator.v86.cpu, pkg => {
-      if (pkg.byteLength !== 8 && pkg.byteLength !== 16) return;
-      events.onEvent?.(parseEventPayload(pkg));
+      // if (pkg.byteLength !== 8 && pkg.byteLength !== 16) return;
+
+      const parsed = parseEventPayload(pkg);
+      events.onEvent?.(parsed);
+      if (parsed.type === ResponseType.Res_CmdOutput && seqListeners.has(parsed.seq)) {
+        seqListeners.get(parsed.seq)?.(parsed);
+        seqListeners.delete(parsed.seq);
+      }
 
       if (!emuState.ready) {
         events.onReady?.();
@@ -227,6 +259,23 @@ export function initEmulator(
           { type: DataType.String, value: text },
         ]),
       );
+    },
+
+    getWindowText(id: number) {
+      return new Promise(resolve => {
+        const seq = getSeqNumber();
+        seqListeners.set(seq, e => {
+          if (e.type === ResponseType.Res_CmdOutput) {
+            resolve(decoder.decode(e.data).split('\0')[0]);
+          }
+        });
+        sendSerial(
+          buildRemoteCommand(CommandType.Cmd_GetWindowText, [
+            { type: DataType.UInt, value: id },
+            { type: DataType.UInt, value: seq },
+          ]),
+        );
+      });
     },
 
     sendMouseEvent(down: boolean, button: 0 | 2) {

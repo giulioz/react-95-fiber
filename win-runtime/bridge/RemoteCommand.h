@@ -47,8 +47,9 @@ enum CommandType {
   Cmd_CreateWindow = 4,
   Cmd_DestroyWindow = 5,
   Cmd_SetWindowText = 6,
-  Cmd_MessageBoxEx = 7,
-  Cmd_Ping = 8,
+  Cmd_GetWindowText = 7,
+  Cmd_MessageBoxEx = 8,
+  Cmd_Ping = 9,
 };
 
 struct RemoteCommand {
@@ -73,8 +74,9 @@ struct RemoteCommandHeader {
 
 enum ResponseType {
   Res_Invalid = 0,
-  Res_PingResponse = 1,
+  Res_Ping = 1,
   Res_WinProc = 2,
+  Res_CmdOutput = 3,
 };
 
 struct WindowMessageResponse {
@@ -83,9 +85,15 @@ struct WindowMessageResponse {
   LPARAM lParam;
 };
 
+struct CommandResponse {
+  unsigned int seq;
+  unsigned int dataLength;
+};
+
 union RemoteResponseData {
   unsigned int none;
   WindowMessageResponse wndProc;
+  CommandResponse cmd;
 };
 
 struct RemoteResponse {

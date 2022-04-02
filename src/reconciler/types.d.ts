@@ -13,7 +13,7 @@ declare global {
         h: number;
         menuId?: number;
         children?: JSX.Element[] | JSX.Element | string;
-        onCommand?: () => void;
+        onEvent?: (e: EventPayload, ref: Win95Ref) => void;
       };
     }
   }

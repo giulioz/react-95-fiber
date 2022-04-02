@@ -38,6 +38,7 @@ void spoolRemoteCommandUI() {
                  command.params[2].dt_int.value, command.params[3].dt_int.value,
                  command.params[4].dt_int.value, SWP_NOZORDER);
     break;
+
   case Cmd_CreateWindow:
     handles[hwndI] = CreateWindowEx(
         command.params[1].dt_uint.value, command.params[2].dt_string.value,
@@ -48,12 +49,31 @@ void spoolRemoteCommandUI() {
         (HMENU)command.params[10].dt_uint.value, NULL, NULL);
     SendMessage(handles[hwndI], WM_SETFONT, WPARAM(defaultFont), TRUE);
     break;
+
   case Cmd_DestroyWindow:
     DestroyWindow(handles[hwndI]);
     break;
+
   case Cmd_SetWindowText:
     SetWindowText(handles[hwndI], command.params[1].dt_string.value);
     break;
+
+  case Cmd_GetWindowText: {
+    const int strLength = 128;
+    char textBuff[strLength];
+    GetWindowText(handles[hwndI], textBuff, strLength);
+
+    CommandResponse cmdMsg = {command.params[1].dt_uint.value, strLength};
+    RemoteResponse msg = {Res_CmdOutput};
+    msg.data.cmd = cmdMsg;
+
+    char finalBuff[strLength + sizeof(CommandResponse) + 4];
+    memcpy(finalBuff, &msg, sizeof(CommandResponse) + 4);
+    memcpy(finalBuff + sizeof(CommandResponse) + 4, textBuff, strLength);
+    SendData(finalBuff, strLength + sizeof(CommandResponse) + 4);
+    break;
+  }
+
   default:
     InvalidCommandError(command);
     break;
@@ -73,7 +93,7 @@ void processRemoteCommand(RemoteCommand &command, char *buffer,
     mouse_event(command.params[0].dt_uint.value, 0, 0, NULL, NULL);
     break;
   case Cmd_Ping: {
-    RemoteResponse msg = {Res_PingResponse, 0};
+    RemoteResponse msg = {Res_Ping, 0};
     SendData((char *)&msg, 8);
     break;
   }

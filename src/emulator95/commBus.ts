@@ -1,9 +1,6 @@
 export const COMMBUS_PORT_IN = 0x502;
 export const COMMBUS_PORT_OUT = 0x500;
 
-const encoder = new TextEncoder();
-const decoder = new TextDecoder();
-
 export class CommBus {
   outQueue: number[][] = [];
   inQueue: number[] = [];
@@ -47,9 +44,5 @@ export class CommBus {
   sendData(buffer: ArrayBuffer) {
     const bytes = new Uint8ClampedArray(buffer);
     this.outQueue.push(Array.from(bytes));
-  }
-
-  sendString(str: string) {
-    this.sendData(encoder.encode(str).buffer);
   }
 }

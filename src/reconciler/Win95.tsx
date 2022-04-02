@@ -1,7 +1,6 @@
 import React, { useRef, HTMLAttributes, useLayoutEffect, PropsWithChildren, createContext, ReactNode, useContext, forwardRef } from 'react';
-import { WM_COMMAND } from '../emulator95/constants';
-import { Binaries, EmulatorAPI, EmulatorState, initEmulator, ResponseType } from '../emulator95/emulator';
-
+import { LOWORD } from '../emulator95/constants';
+import { Binaries, EmulatorAPI, EmulatorState, EventPayload, initEmulator, ResponseType } from '../emulator95/emulator';
 import { reconciler } from './reconciler';
 
 export interface Win95Ref {
@@ -13,7 +12,7 @@ export type RootNode = Win95Ref & {
   type: 'root';
   root: RootNode;
   id: 0;
-  events: Map<number, () => void>;
+  events: Map<number, (e: EventPayload, ref: Win95Ref) => void>;
 };
 
 const context = createContext<Win95Ref | null>(null);
@@ -55,9 +54,10 @@ export function render(element: ReactNode, rootDiv: HTMLDivElement, w95Props: Wi
           reconciler.updateContainer(<context.Provider value={state as RootNode}>{element}</context.Provider>, root, null, () => undefined);
         },
         onEvent: e => {
-          if (e.type === ResponseType.Res_WinProc && e.message === WM_COMMAND) {
-            const record = state.events.get(e.wParam);
-            if (record) record();
+          if (e.type === ResponseType.Res_WinProc) {
+            const controlIdent = LOWORD(e.wParam);
+            const record = state.events.get(controlIdent);
+            if (record) record(e, state);
           }
         },
       },

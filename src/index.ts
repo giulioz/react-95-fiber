@@ -6,3 +6,6 @@ import * as React95Fiber from './reconciler/types.d';
 export { React95Fiber };
 
 export * from './components/Button';
+export * from './components/Window';
+export * from './components/Edit';
+export * from './components/Label';

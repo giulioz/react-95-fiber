@@ -20,7 +20,7 @@ type NodeType =
             w: number;
             h: number;
             menuId?: number;
-            onCommand?: () => void;
+            onEvent?: () => void;
           };
         }
     ) & { root: RootNode; children?: NodeType[] };
@@ -31,7 +31,7 @@ function getIncremental() {
 }
 
 function appendChild(parentInstance: NodeType, child: NodeType) {
-  console.log('appendChild', { parentInstance, child });
+  // console.log('appendChild', { parentInstance, child });
 
   if (child.type === 'w95Window' && parentInstance.type !== 'text') {
     child.root.api.createWindow({
@@ -47,14 +47,14 @@ function appendChild(parentInstance: NodeType, child: NodeType) {
       menuId: child.props.menuId !== undefined ? child.props.menuId : child.id || 0,
       extStyle: child.props.extStyle || 0,
     });
-    if (child.props.onCommand) {
-      child.root.events.set(child.id, child.props.onCommand);
+    if (child.props.onEvent) {
+      child.root.events.set(child.id, child.props.onEvent);
     }
   }
 }
 
 function appendChildToContainer(parentInstance: NodeType, child: NodeType) {
-  console.log('appendChildToContainer', { parentInstance, child });
+  // console.log('appendChildToContainer', { parentInstance, child });
 
   appendChild(parentInstance, child);
   child.children?.forEach(c => appendChildToContainer(child, c));
@@ -101,7 +101,7 @@ export const reconciler = Reconciler({
   },
 
   appendInitialChild(parentInstance: NodeType, child: NodeType) {
-    console.log('appendInitialChild', { parentInstance, child });
+    // console.log('appendInitialChild', { parentInstance, child });
     if (child.type === 'text' && parentInstance.type === 'w95Window') {
       parentInstance.props.text = child.content;
     } else {
@@ -135,13 +135,13 @@ export const reconciler = Reconciler({
   appendChildToContainer,
 
   commitTextUpdate(instance: NodeType, oldText: string, newText: string) {
-    console.log('commitTextUpdate', { instance, oldText, newText });
+    // console.log('commitTextUpdate', { instance, oldText, newText });
   },
 
   commitMount: p => console.log('commitMount', p),
 
   commitUpdate(instance: NodeType, diff, type, oldProps: Record<string, unknown>, newProps: Record<string, unknown>, fiber: Reconciler.Fiber) {
-    console.log('commitUpdate', { instance, diff, type, oldProps, newProps, fiber });
+    // console.log('commitUpdate', { instance, diff, type, oldProps, newProps, fiber });
 
     if (instance.type === 'w95Window') {
       if (typeof newProps.children === 'string' && newProps.children !== oldProps.children) {
