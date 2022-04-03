@@ -20,19 +20,20 @@ export function Checkbox({
   h: number;
   children: string | JSX.Element;
 }) {
+  const { api } = useWin95();
+
   const buttonRef = useRef<{ id: number }>();
   const handleEvent = useCallback(
-    async (e: EventPayload, ref: Win95Ref) => {
+    async (e: EventPayload) => {
       if (buttonRef.current && e.type === ResponseType.Res_WinProc && e.message === WM_COMMAND) {
-        const checked = await ref.api.sendMessage(buttonRef.current.id, BM_GETCHECK, 0, 0);
-        ref.api.sendMessage(buttonRef.current.id, BM_SETCHECK, checked ? BST_UNCHECKED : BST_CHECKED, 0);
+        const checked = await api.sendMessage(buttonRef.current.id, BM_GETCHECK, 0, 0);
+        api.sendMessage(buttonRef.current.id, BM_SETCHECK, checked ? BST_UNCHECKED : BST_CHECKED, 0);
         onChange && onChange(checked === BST_UNCHECKED);
       }
     },
     [onChange],
   );
 
-  const { api } = useWin95();
   useEffect(() => {
     if (buttonRef.current) {
       api.sendMessage(buttonRef.current.id, BM_SETCHECK, value ? BST_CHECKED : BST_UNCHECKED, 0);

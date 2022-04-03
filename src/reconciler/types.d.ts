@@ -13,8 +13,19 @@ declare global {
         w: number;
         h: number;
         menuId?: number;
-        children?: JSX.Element[] | JSX.Element | string;
+        children?: null | string | JSX.Element | (string | JSX.Element | null)[];
         onEvent?: (e: EventPayload, ref: Win95Ref) => void;
+      };
+
+      w95Font: {
+        ref?: React.Ref<{ id: number } | null | undefined>;
+        width?: number;
+        height?: number;
+        weight?: number;
+        italic?: boolean;
+        underline?: boolean;
+        strikeOut?: boolean;
+        faceName?: string;
       };
     }
   }

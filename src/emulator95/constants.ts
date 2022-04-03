@@ -465,3 +465,11 @@ export const WC_DIALOG = 0x8002;
 export const DWL_MSGRESULT = 0;
 export const DWL_DLGPROC = 4;
 export const DWL_USER = 8;
+
+export const GWL_WNDPROC = -4;
+export const GWL_HINSTANCE = -6;
+export const GWL_HWNDPARENT = -8;
+export const GWL_STYLE = -16;
+export const GWL_EXSTYLE = -20;
+export const GWL_USERDATA = -21;
+export const GWL_ID = -12;

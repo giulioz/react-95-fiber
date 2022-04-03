@@ -54,7 +54,8 @@ void spoolRemoteCommandUI() {
         command.params[7].dt_int.value, command.params[8].dt_int.value,
         handles[command.params[9].dt_uint.value],
         (HMENU)command.params[10].dt_uint.value, NULL, NULL);
-    SendMessage(handles[hwndI], WM_SETFONT, WPARAM(defaultFont), TRUE);
+    SendMessage(handles[hwndI], WM_SETFONT, (WPARAM)defaultFont,
+                MAKELPARAM(TRUE, 0));
     break;
 
   case Cmd_DestroyWindow:
@@ -106,6 +107,52 @@ void spoolRemoteCommandUI() {
     break;
   }
 
+  case Cmd_SetWindowLong:
+    SetWindowLong(handles[hwndI], command.params[1].dt_int.value,
+                  command.params[2].dt_uint.value);
+    break;
+
+  case Cmd_GetWindowLong: {
+    LONG result = GetWindowLong(handles[hwndI], command.params[1].dt_int.value);
+    CommandResponseHandle cmdMsg = {command.params[2].dt_uint.value, result};
+    RemoteResponse msg = {Res_CmdOutputHandle};
+    msg.data.cmdHandle = cmdMsg;
+    SendData((char *)(&msg), 12);
+    break;
+  }
+
+  case Cmd_CreateFont: {
+    NONCLIENTMETRICS metrics;
+    metrics.cbSize = sizeof(NONCLIENTMETRICS);
+    SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(NONCLIENTMETRICS),
+                         &metrics, 0);
+    metrics.lfMessageFont.lfWidth = command.params[1].dt_int.value;
+    metrics.lfMessageFont.lfHeight = command.params[2].dt_int.value;
+    metrics.lfMessageFont.lfWeight = command.params[3].dt_int.value;
+    metrics.lfMessageFont.lfItalic = command.params[4].dt_int.value;
+    metrics.lfMessageFont.lfUnderline = command.params[5].dt_int.value;
+    metrics.lfMessageFont.lfStrikeOut = command.params[6].dt_int.value;
+    if (command.nParams >= 7) {
+      strncpy(metrics.lfMessageFont.lfFaceName,
+              command.params[7].dt_string.value, 32);
+    }
+    HFONT handle = CreateFontIndirect(&metrics.lfMessageFont);
+
+    CommandResponseHandle cmdMsg = {hwndI, (unsigned int)handle};
+    RemoteResponse msg = {Res_CmdOutputHandle};
+    msg.data.cmdHandle = cmdMsg;
+    SendData((char *)(&msg), 12);
+    break;
+  }
+
+  case Cmd_DeleteObject:
+    DeleteObject((HICON)hwndI);
+    break;
+
+  case Cmd_ShowWindow:
+    ShowWindow(handles[hwndI], command.params[1].dt_int.value);
+    break;
+
   default:
     InvalidCommandError(command);
     break;
@@ -153,12 +200,21 @@ DWORD WINAPI ReceiverThreadFunc(void *data) {
 
 LRESULT CALLBACK wndProc(HWND hwnd, UINT message, WPARAM wParam,
                          LPARAM lParam) {
-  WindowMessageResponse wndMsg = {message, wParam, lParam};
+  unsigned long hwndId = (unsigned long)hwnd;
+  for (std::map<int, HWND>::iterator iter = handles.begin();
+       iter != handles.end(); iter++) {
+    if (iter->second == hwnd)
+      hwndId = iter->first;
+  }
+
+  WindowMessageResponse wndMsg = {hwndId, message, wParam, lParam};
   RemoteResponse msg = {Res_WinProc};
   msg.data.wndProc = wndMsg;
-  SendData((char *)&msg, 16);
+  SendData((char *)&msg, 20);
 
   switch (message) {
+  case WM_CLOSE:
+    return 0;
   default:
     return DefWindowProc(hwnd, message, wParam, lParam);
   }
@@ -183,7 +239,7 @@ int RegisterWindowClass(HINSTANCE hInstance, char *className) {
   wincl.cbClsExtra = 0;      /* No extra bytes after the window class */
   wincl.cbWndExtra = 0;      /* structure or the window instance */
   /* Use Windows's default color as the background of the window */
-  wincl.hbrBackground = (HBRUSH)COLOR_BACKGROUND;
+  wincl.hbrBackground = (HBRUSH)COLOR_WINDOW;
 
   return RegisterClassEx(&wincl);
 }
@@ -196,7 +252,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
   HANDLE msgHandlerThread =
       CreateThread(NULL, 0, ReceiverThreadFunc, NULL, 0, NULL);
 
-  defaultFont = (HFONT)GetStockObject(DEFAULT_GUI_FONT);
+  NONCLIENTMETRICS metrics;
+  metrics.cbSize = sizeof(NONCLIENTMETRICS);
+  SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(NONCLIENTMETRICS),
+                       &metrics, 0);
+  defaultFont = CreateFontIndirect(&metrics.lfMessageFont);
 
   RegisterWindowClass(hInstance, szClassName);
 

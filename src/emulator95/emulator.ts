@@ -18,6 +18,11 @@ export enum CommandType {
   Cmd_ExtractIcon = 10,
   Cmd_DestroyIcon = 11,
   Cmd_SendMessage = 12,
+  Cmd_SetWindowLong = 13,
+  Cmd_GetWindowLong = 14,
+  Cmd_CreateFont = 15,
+  Cmd_DeleteObject = 16,
+  Cmd_ShowWindow = 17,
 }
 
 export enum DataType {
@@ -65,14 +70,6 @@ export interface EmulatorState {
   ready: boolean;
 }
 
-let seqNumber = 0;
-function getSeqNumber() {
-  const s = seqNumber;
-  seqNumber = (seqNumber + 1) & 0xffffff;
-  return s;
-}
-const seqListeners = new Map<number, (e: EventPayload) => void>();
-
 export enum ResponseType {
   Res_Invalid = 0,
   Res_Ping = 1,
@@ -84,6 +81,7 @@ export enum ResponseType {
 export type EventPayload =
   | {
       type: ResponseType.Res_WinProc;
+      hwnd: number;
       message: number;
       wParam: number;
       lParam: number;
@@ -107,12 +105,13 @@ function parseEventPayload(data: ArrayBuffer): EventPayload | null {
   const dv = new DataView(data);
   const type = dv.getUint32(0, true) as ResponseType;
   if (type === ResponseType.Res_WinProc) {
-    if (data.byteLength !== 16) return null;
+    if (data.byteLength !== 20) return null;
     return {
       type,
-      message: dv.getUint32(4, true),
-      wParam: dv.getUint32(8, true),
-      lParam: dv.getInt32(12, true),
+      hwnd: dv.getUint32(4, true),
+      message: dv.getUint32(8, true),
+      wParam: dv.getUint32(12, true),
+      lParam: dv.getInt32(16, true),
     };
   } else if (type === ResponseType.Res_CmdOutputHandle) {
     if (data.byteLength !== 12) return null;
@@ -198,6 +197,25 @@ export function initEmulator(screenContainer: HTMLDivElement, events: EmulatorEv
     const commBus = v86Emulator.v86.cpu.devices.commBus as CommBus;
     commBus && commBus.sendData(data);
   }
+
+  let seqNumber = 0;
+  function getSeqNumber() {
+    const s = seqNumber;
+    seqNumber = (seqNumber + 1) & 0xffffff;
+    return s;
+  }
+  const seqListeners = new Map<number, (e: EventPayload) => void>();
+
+  const createdFonts: {
+    lfWidth: number;
+    lfHeight: number;
+    lfWeight: number;
+    lfItalic: number;
+    lfUnderline: number;
+    lfStrikeOut: number;
+    lfFaceName?: string;
+    handle: number;
+  }[] = [];
 
   const api = {
     sendSerial,
@@ -297,9 +315,11 @@ export function initEmulator(screenContainer: HTMLDivElement, events: EmulatorEv
         const seq = getSeqNumber();
         seqListeners.set(seq, e => {
           if (e.type === ResponseType.Res_CmdOutputHandle) {
+            console.timeEnd('extractIcon' + file + id);
             resolve(e.handle);
           }
         });
+        console.time('extractIcon' + file + id);
         sendSerial(
           buildRemoteCommand(CommandType.Cmd_ExtractIcon, [
             { type: DataType.UInt, value: seq },
@@ -332,6 +352,91 @@ export function initEmulator(screenContainer: HTMLDivElement, events: EmulatorEv
           ]),
         );
       });
+    },
+
+    setWindowLong(id: number, nIndex: number, newLong: number) {
+      sendSerial(
+        buildRemoteCommand(CommandType.Cmd_SetWindowLong, [
+          { type: DataType.UInt, value: id },
+          { type: DataType.Int, value: nIndex },
+          { type: DataType.UInt, value: newLong },
+        ]),
+      );
+    },
+
+    getWindowLong(id: number, nIndex: number) {
+      return new Promise<number>(resolve => {
+        const seq = getSeqNumber();
+        seqListeners.set(seq, e => {
+          if (e.type === ResponseType.Res_CmdOutputHandle) {
+            resolve(e.handle);
+          }
+        });
+        sendSerial(
+          buildRemoteCommand(CommandType.Cmd_GetWindowLong, [
+            { type: DataType.UInt, value: id },
+            { type: DataType.Int, value: nIndex },
+            { type: DataType.UInt, value: seq },
+          ]),
+        );
+      });
+    },
+
+    createFont(params: {
+      lfWidth: number;
+      lfHeight: number;
+      lfWeight: number;
+      lfItalic: number;
+      lfUnderline: number;
+      lfStrikeOut: number;
+      lfFaceName?: string;
+    }) {
+      const found = createdFonts.find(
+        f =>
+          f.lfWidth === params.lfWidth &&
+          f.lfHeight === params.lfHeight &&
+          f.lfWeight === params.lfWeight &&
+          f.lfItalic === params.lfItalic &&
+          f.lfUnderline === params.lfUnderline &&
+          f.lfStrikeOut === params.lfStrikeOut &&
+          f.lfFaceName === params.lfFaceName,
+      );
+      if (found) return found.handle;
+
+      return new Promise<number>(resolve => {
+        const seq = getSeqNumber();
+        seqListeners.set(seq, e => {
+          if (e.type === ResponseType.Res_CmdOutputHandle) {
+            createdFonts.push({ ...params, handle: e.handle });
+            resolve(e.handle);
+          }
+        });
+        sendSerial(
+          buildRemoteCommand(CommandType.Cmd_CreateFont, [
+            { type: DataType.UInt, value: seq },
+            { type: DataType.Int, value: params.lfWidth },
+            { type: DataType.Int, value: params.lfHeight },
+            { type: DataType.Int, value: params.lfWeight },
+            { type: DataType.Int, value: params.lfItalic },
+            { type: DataType.Int, value: params.lfUnderline },
+            { type: DataType.Int, value: params.lfStrikeOut },
+            ...(params.lfFaceName ? [{ type: DataType.String, value: params.lfFaceName }] : []),
+          ]),
+        );
+      });
+    },
+
+    deleteObject(handle: number) {
+      sendSerial(buildRemoteCommand(CommandType.Cmd_DeleteObject, [{ type: DataType.UInt, value: handle }]));
+    },
+
+    showWindow(id: number, state: number) {
+      sendSerial(
+        buildRemoteCommand(CommandType.Cmd_ShowWindow, [
+          { type: DataType.UInt, value: id },
+          { type: DataType.Int, value: state },
+        ]),
+      );
     },
 
     sendMouseEvent(down: boolean, button: 0 | 2) {

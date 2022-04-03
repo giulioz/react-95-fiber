@@ -12,7 +12,7 @@ export type RootNode = Win95Ref & {
   type: 'root';
   root: RootNode;
   id: 0;
-  events: Map<number, (e: EventPayload, ref: Win95Ref) => void>;
+  events: Map<number, ((e: EventPayload) => void)[]>;
 };
 
 const context = createContext<Win95Ref | null>(null);
@@ -40,7 +40,7 @@ export function render(element: ReactNode, rootDiv: HTMLDivElement, w95Props: Wi
     type: 'root',
     root: null,
     id: 0,
-    events: new Map<number, () => void>(),
+    events: new Map<number, (() => void)[]>(),
   };
   state.root = state;
 
@@ -56,8 +56,8 @@ export function render(element: ReactNode, rootDiv: HTMLDivElement, w95Props: Wi
         onEvent: e => {
           if (e.type === ResponseType.Res_WinProc) {
             const controlIdent = LOWORD(e.wParam);
-            const record = state.events.get(controlIdent);
-            if (record) record(e, state);
+            const records = state.events.get(controlIdent);
+            if (records) records.forEach(r => r(e));
           }
         },
       },
@@ -99,7 +99,7 @@ export const Win95 = forwardRef<Win95Ref, PropsWithChildren<HTMLAttributes<HTMLD
   useLayoutEffect(() => {
     emulatorRef.current = render(children, emulatorDivRef.current!, { onReady }, binaries);
     if (typeof ref === 'function') ref(emulatorRef.current);
-    else ref.current = emulatorRef.current;
+    else if (ref) ref.current = emulatorRef.current;
   }, [children, onReady]);
 
   useLayoutEffect(() => {

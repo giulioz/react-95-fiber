@@ -53,6 +53,11 @@ enum CommandType {
   Cmd_ExtractIcon = 10,
   Cmd_DestroyIcon = 11,
   Cmd_SendMessage = 12,
+  Cmd_SetWindowLong = 13,
+  Cmd_GetWindowLong = 14,
+  Cmd_CreateFont = 15,
+  Cmd_DeleteObject = 16,
+  Cmd_ShowWindow = 17,
 };
 
 struct RemoteCommand {
@@ -86,6 +91,7 @@ enum ResponseType {
 };
 
 struct WindowMessageResponse {
+  UINT hwndId;
   UINT message;
   WPARAM wParam;
   LPARAM lParam;
