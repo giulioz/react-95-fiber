@@ -26,7 +26,8 @@ type NodeType =
         }
       | {
           type: 'w95Font';
-          handle: number;
+          handle?: number;
+          parent?: NodeType;
           props: {
             width?: number;
             height?: number;
@@ -78,6 +79,8 @@ async function appendChild(parentInstance: NodeType, child: NodeType) {
       lfStrikeOut: child.props.strikeOut ? 1 : 0,
       lfFaceName: child.props.faceName,
     });
+    child.handle = fontHandle;
+    child.parent = parentInstance;
     await child.root.api.sendMessage(parentInstance.id, WM_SETFONT, fontHandle, 1);
   }
 }
@@ -189,14 +192,7 @@ export const reconciler = Reconciler({
 
   commitMount: p => console.log('commitMount', p),
 
-  commitUpdate(
-    instance: NodeType,
-    diff,
-    type,
-    oldProps: JSX.IntrinsicElements['w95Window'],
-    newProps: JSX.IntrinsicElements['w95Window'],
-    fiber: Reconciler.Fiber,
-  ) {
+  async commitUpdate(instance: NodeType, diff, type, oldProps: any, newProps: any, fiber: Reconciler.Fiber) {
     // console.log('commitUpdate', { instance, diff, type, oldProps, newProps, fiber });
 
     if (instance.type === 'w95Window') {
@@ -219,6 +215,19 @@ export const reconciler = Reconciler({
       if (typeof newProps.extStyle === 'number' && newProps.extStyle !== oldProps.extStyle) {
         instance.root.api.setWindowLong(instance.id, GWL_EXSTYLE, newProps.extStyle);
       }
+    }
+
+    if (instance.type === 'w95Font' && instance.parent && instance.parent.type === 'w95Window') {
+      const fontHandle = await instance.root.api.createFont({
+        lfWidth: newProps.width || 0,
+        lfHeight: newProps.height || 0,
+        lfWeight: newProps.weight || 0,
+        lfItalic: newProps.italic ? 1 : 0,
+        lfUnderline: newProps.underline ? 1 : 0,
+        lfStrikeOut: newProps.strikeOut ? 1 : 0,
+        lfFaceName: newProps.faceName,
+      });
+      await instance.root.api.sendMessage(instance.parent.id, WM_SETFONT, fontHandle, 1);
     }
   },
 

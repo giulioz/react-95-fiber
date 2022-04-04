@@ -14,7 +14,7 @@ export function Icon({ iconId, iconFile = 'shell32.dll', x, y, w, h }: { iconId:
       }
     }
     loadIcon();
-  }, []);
+  }, [iconFile, iconId]);
 
   return <w95Window ref={staticRef} type='Static' params={WS_VISIBLE | WS_CHILD | SS_ICON} x={x} y={y} w={w} h={h} />;
 }

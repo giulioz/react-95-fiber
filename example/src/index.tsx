@@ -5,10 +5,12 @@ import v86WASMFn from 'v86/build/v86.wasm';
 import seabiosUrl from 'v86/bios/seabios.bin?url';
 import vgabiosUrl from 'v86/bios/vgabios.bin?url';
 import osImgUrl from '../../binaries/os.img?url';
-import { Win95, Button, Binaries, Window, Label, Icon } from '../../src';
+import { Win95, Binaries } from '../../src';
 
+import { Intro } from './Intro';
 import { IconsViewer } from './IconsViewer';
 import { Calculator } from './Calculator';
+
 import './style.css';
 
 export function App({ binaries }: { binaries: Binaries }) {
@@ -17,26 +19,7 @@ export function App({ binaries }: { binaries: Binaries }) {
 
   return (
     <Win95 binaries={binaries} className='w95Window'>
-      <Window title='react-95-fiber' w={280} h={220}>
-        <Icon iconId={39} x={10} y={10} w={32} h={32} />
-
-        <Label x={10} y={55} w={250} h={25}>
-          Welcome to react-95-fiber :)
-          <w95Font weight={700} />
-        </Label>
-
-        <Label x={10} y={80} w={220} h={20}>
-          Use the buttons below to open examples:
-        </Label>
-
-        <Button onClick={() => setIconsViewerOpen(true)} x={10} y={110} w={120} h={25}>
-          Available icons
-        </Button>
-
-        <Button onClick={() => setCalculatorOpen(true)} x={10} y={145} w={120} h={25}>
-          Calculator
-        </Button>
-      </Window>
+      <Intro openIconsViewer={() => setIconsViewerOpen(true)} openCalculator={() => setCalculatorOpen(true)} />
 
       <IconsViewer open={iconsViewerOpen} onClose={() => setIconsViewerOpen(false)} />
       <Calculator open={calculatorOpen} onClose={() => setCalculatorOpen(false)} />
