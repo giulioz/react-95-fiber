@@ -81,10 +81,12 @@ export function unmountComponentAtNode(rootDiv: HTMLDivElement) {
   const store = roots.get(rootDiv);
   if (!store) return;
 
-  const { root } = store;
+  const { root, state } = store;
+
+  state.state.v86Emulator.stop();
+  state.state.v86Emulator.destroy();
 
   reconciler.updateContainer(null, root, null, () => {
-    // TODO: cleanup
     roots.delete(rootDiv);
   });
 }

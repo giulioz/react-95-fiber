@@ -40,6 +40,15 @@ export function App({ binaries }: { binaries: Binaries }) {
 
       <IconsViewer open={iconsViewerOpen} onClose={() => setIconsViewerOpen(false)} />
       <Calculator open={calculatorOpen} onClose={() => setCalculatorOpen(false)} />
+
+      {/* <Window title='Stress test' w={50 * 16 + 8} h={600}>
+        {new Array(1500).fill(0).map((_, i) => (
+          <Button x={(i % 50) * 16} y={Math.floor(i / 50) * 16} w={16} h={16}>
+            {i.toString()}
+            <w95Font height={10} weight={700} />
+          </Button>
+        ))}
+      </Window> */}
     </Win95>
   );
 }

@@ -139,9 +139,9 @@ export const reconciler = Reconciler({
         props,
         root: rootContainer.root,
       };
-    } else {
-      throw new Error('Unknown type!');
     }
+
+    throw new Error('Unknown type!');
   },
 
   createTextInstance(newText: string) {
@@ -202,23 +202,37 @@ export const reconciler = Reconciler({
     if (instance.type === 'w95Window') {
       if (typeof newProps.children === 'string' && newProps.children !== oldProps.children) {
         instance.root.api.setWindowText(instance.id, newProps.children);
-      } else if (typeof newProps.text === 'string' && newProps.text !== oldProps.text) {
+      } else if (Array.isArray(newProps.children)) {
+        const text = newProps.children.reduce((acc: string, child) => acc + (typeof child === 'string' ? child : ''), '');
+        const oldText = Array.isArray(oldProps.children) && oldProps.children.reduce((acc, child) => (acc + typeof child === 'string' ? child : ''), '');
+        if (text !== oldText) instance.root.api.setWindowText(instance.id, text);
+      }
+      if (typeof newProps.text === 'string' && newProps.text !== oldProps.text) {
         instance.root.api.setWindowText(instance.id, newProps.text);
-      } else if (newProps.x !== oldProps.x || newProps.y !== oldProps.y || newProps.w !== oldProps.w || newProps.h !== oldProps.h) {
+      }
+      if (newProps.x !== oldProps.x || newProps.y !== oldProps.y || newProps.w !== oldProps.w || newProps.h !== oldProps.h) {
         instance.root.api.setWindowPos(instance.id, newProps.x, newProps.y, newProps.w, newProps.h);
-      } else if (newProps.params !== oldProps.params) {
+      }
+      if (newProps.params !== oldProps.params) {
         instance.root.api.setWindowLong(instance.id, GWL_STYLE, newProps.params);
-      } else if (typeof newProps.extStyle === 'number' && newProps.extStyle !== oldProps.extStyle) {
+      }
+      if (typeof newProps.extStyle === 'number' && newProps.extStyle !== oldProps.extStyle) {
         instance.root.api.setWindowLong(instance.id, GWL_EXSTYLE, newProps.extStyle);
       }
     }
   },
 
-  insertBefore: p => console.log('insertBefore', p),
-  insertInContainerBefore: (parentInstance, child, beforeChild) => console.log('insertInContainerBefore', { parentInstance, child, beforeChild }),
+  insertBefore: appendChild,
+  insertInContainerBefore: appendChild,
 
   removeChild,
   removeChildFromContainer: removeChild,
 
   resetTextContent: p => console.log('resetTextContent', p),
+});
+
+reconciler.injectIntoDevTools({
+  bundleType: process.env.NODE_ENV === 'production' ? 0 : 1,
+  rendererPackageName: 'react-95-fiber',
+  version: '0.0.1',
 });

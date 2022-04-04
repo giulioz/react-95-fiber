@@ -170,6 +170,8 @@ export function initEmulator(screenContainer: HTMLDivElement, events: EmulatorEv
     autostart: options.fromState || true,
   });
 
+  (window as any).emulator = v86Emulator;
+
   v86Emulator.add_listener('emulator-started', () => {
     v86Emulator.v86.cpu.devices.commBus = new CommBus(v86Emulator.v86.cpu, pkg => {
       const parsed = parseEventPayload(pkg);
@@ -315,11 +317,9 @@ export function initEmulator(screenContainer: HTMLDivElement, events: EmulatorEv
         const seq = getSeqNumber();
         seqListeners.set(seq, e => {
           if (e.type === ResponseType.Res_CmdOutputHandle) {
-            console.timeEnd('extractIcon' + file + id);
             resolve(e.handle);
           }
         });
-        console.time('extractIcon' + file + id);
         sendSerial(
           buildRemoteCommand(CommandType.Cmd_ExtractIcon, [
             { type: DataType.UInt, value: seq },
