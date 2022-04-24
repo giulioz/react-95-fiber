@@ -6,38 +6,21 @@
 #include <vector>
 #include <windows.h>
 
+#include "MouseReceiver.h"
 #include "RemoteCommand.h"
 #include "SerialComm.h"
 
 HFONT defaultFont;
 std::map<int, HWND> handles;
 
-bool running = true;
-CRITICAL_SECTION commandsQueueMutex;
-std::queue<RemoteCommand> commandsQueue;
-
-void InvalidCommandError(RemoteCommand &command) {
-  char hexBuffer[2048] = {0};
-  for (int i = 0; i < command.originalSize; i++) {
-    sprintf(&hexBuffer[i * 2], "%02X", ((char *)command.originalBuffer)[i]);
-  }
-
-  char msgBuffer[4096] = {0};
-  sprintf(msgBuffer, "Invalid command %d with %d params: %s", command.type,
-          command.nParams, hexBuffer);
+void invalidCommandError(RemoteCommand &command) {
+  char msgBuffer[256] = {0};
+  sprintf(msgBuffer, "Invalid command %d with %d params", command.type,
+          command.nParams);
   MessageBoxEx(NULL, msgBuffer, "Error", MB_OK, NULL);
 }
 
-void spoolRemoteCommandUI() {
-  EnterCriticalSection(&commandsQueueMutex);
-  if (commandsQueue.empty()) {
-    LeaveCriticalSection(&commandsQueueMutex);
-    return;
-  }
-  RemoteCommand command = commandsQueue.front();
-  commandsQueue.pop();
-  LeaveCriticalSection(&commandsQueueMutex);
-
+void processRemoteCommand(RemoteCommand command) {
   unsigned int hwndI = command.params[0].dt_uint.value;
   switch (command.type) {
   case Cmd_SetWindowPos:
@@ -78,7 +61,7 @@ void spoolRemoteCommandUI() {
     char finalBuff[strLength + sizeof(CommandResponseLong) + 4];
     memcpy(finalBuff, &msg, sizeof(CommandResponseLong) + 4);
     memcpy(finalBuff + sizeof(CommandResponseLong) + 4, textBuff, strLength);
-    SendData(finalBuff, strLength + sizeof(CommandResponseLong) + 4);
+    sendData(finalBuff, strLength + sizeof(CommandResponseLong) + 4);
     break;
   }
 
@@ -88,7 +71,7 @@ void spoolRemoteCommandUI() {
     CommandResponseHandle cmdMsg = {hwndI, (unsigned int)handle};
     RemoteResponse msg = {Res_CmdOutputHandle};
     msg.data.cmdHandle = cmdMsg;
-    SendData((char *)(&msg), 12);
+    sendData((char *)(&msg), 12);
     break;
   }
 
@@ -103,7 +86,7 @@ void spoolRemoteCommandUI() {
     CommandResponseHandle cmdMsg = {command.params[4].dt_uint.value, result};
     RemoteResponse msg = {Res_CmdOutputHandle};
     msg.data.cmdHandle = cmdMsg;
-    SendData((char *)(&msg), 12);
+    sendData((char *)(&msg), 12);
     break;
   }
 
@@ -117,7 +100,7 @@ void spoolRemoteCommandUI() {
     CommandResponseHandle cmdMsg = {command.params[2].dt_uint.value, result};
     RemoteResponse msg = {Res_CmdOutputHandle};
     msg.data.cmdHandle = cmdMsg;
-    SendData((char *)(&msg), 12);
+    sendData((char *)(&msg), 12);
     break;
   }
 
@@ -141,7 +124,7 @@ void spoolRemoteCommandUI() {
     CommandResponseHandle cmdMsg = {hwndI, (unsigned int)handle};
     RemoteResponse msg = {Res_CmdOutputHandle};
     msg.data.cmdHandle = cmdMsg;
-    SendData((char *)(&msg), 12);
+    sendData((char *)(&msg), 12);
     break;
   }
 
@@ -153,49 +136,27 @@ void spoolRemoteCommandUI() {
     ShowWindow(handles[hwndI], command.params[1].dt_int.value);
     break;
 
-  default:
-    InvalidCommandError(command);
+  case Cmd_SetResolution:
+    DEVMODE dm;
+    memset(&dm, 0, sizeof(dm));
+    dm.dmSize = sizeof(dm);
+    EnumDisplaySettings(NULL, ENUM_CURRENT_SETTINGS, &dm);
+    dm.dmPelsWidth = command.params[0].dt_int.value;
+    dm.dmPelsHeight = command.params[1].dt_int.value;
+    dm.dmFields = DM_PELSWIDTH | DM_PELSHEIGHT;
+    ChangeDisplaySettings(&dm, 0);
     break;
-  }
 
-  deallocRemoteCommand(command);
-}
-
-void processRemoteCommand(RemoteCommand &command) {
-  switch (command.type) {
-  case Cmd_SetCursorPos:
-    SetCursorPos(command.params[0].dt_uint.value,
-                 command.params[1].dt_uint.value);
-    break;
-  case Cmd_MouseEvent:
-    mouse_event(command.params[0].dt_uint.value, 0, 0, NULL, NULL);
-    break;
   case Cmd_Ping: {
     RemoteResponse msg = {Res_Ping, 0};
-    SendData((char *)&msg, 8);
+    sendData((char *)&msg, 8);
     break;
   }
-  default: {
-    RemoteCommand copy = command.heapCopy();
 
-    EnterCriticalSection(&commandsQueueMutex);
-    commandsQueue.push(copy);
-    LeaveCriticalSection(&commandsQueueMutex);
+  default:
+    invalidCommandError(command);
     break;
   }
-  }
-}
-
-DWORD WINAPI ReceiverThreadFunc(void *data) {
-  while (running) {
-    char buffer[4096] = {0};
-    unsigned long readt = RecieveData(buffer);
-    if (readt >= sizeof(RemoteCommandHeader)) {
-      RemoteCommand cmd = parseRemoteCommand(buffer, readt);
-      processRemoteCommand(cmd);
-    }
-  }
-  return 0;
 }
 
 LRESULT CALLBACK wndProc(HWND hwnd, UINT message, WPARAM wParam,
@@ -210,7 +171,7 @@ LRESULT CALLBACK wndProc(HWND hwnd, UINT message, WPARAM wParam,
   WindowMessageResponse wndMsg = {hwndId, message, wParam, lParam};
   RemoteResponse msg = {Res_WinProc};
   msg.data.wndProc = wndMsg;
-  SendData((char *)&msg, 20);
+  sendData((char *)&msg, 20);
 
   switch (message) {
   case WM_CLOSE:
@@ -248,9 +209,7 @@ char szClassName[] = "WindowsApp";
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
                    LPSTR lpCmdLine, int nShowCmd) {
-  InitializeCriticalSection(&commandsQueueMutex);
-  HANDLE msgHandlerThread =
-      CreateThread(NULL, 0, ReceiverThreadFunc, NULL, 0, NULL);
+  startMouseReceiver();
 
   NONCLIENTMETRICS metrics;
   metrics.cbSize = sizeof(NONCLIENTMETRICS);
@@ -261,18 +220,21 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
   RegisterWindowClass(hInstance, szClassName);
 
   MSG messages = {0};
+  char receiveBuffer[4096] = {0};
   while (messages.message != WM_QUIT) {
     if (PeekMessage(&messages, NULL, 0, 0, PM_REMOVE) > 0) {
       TranslateMessage(&messages);
       DispatchMessage(&messages);
     }
 
-    spoolRemoteCommandUI();
+    unsigned long readt = recieveData(receiveBuffer);
+    if (readt >= sizeof(RemoteCommandHeader)) {
+      RemoteCommand cmd = parseRemoteCommand(receiveBuffer, readt);
+      processRemoteCommand(cmd);
+    }
   }
 
-  running = false;
-  WaitForSingleObject(msgHandlerThread, INFINITE);
-  DeleteCriticalSection(&commandsQueueMutex);
+  stopMouseReceiver();
 
   return messages.wParam;
 }

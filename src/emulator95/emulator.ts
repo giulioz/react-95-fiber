@@ -23,6 +23,18 @@ export enum CommandType {
   Cmd_CreateFont = 15,
   Cmd_DeleteObject = 16,
   Cmd_ShowWindow = 17,
+  Cmd_SetResolution = 18,
+}
+
+export enum MouseCommandType {
+  MouseCmd_Nothing = 0,
+  MouseCmd_LeftDown = 1,
+  MouseCmd_LeftUp = 2,
+  MouseCmd_RightDown = 3,
+  MouseCmd_RightUp = 4,
+  MouseCmd_MiddleDown = 5,
+  MouseCmd_MiddleUp = 6,
+  MouseCmd_Wheel = 7,
 }
 
 export enum DataType {
@@ -199,6 +211,16 @@ export function initEmulator(screenContainer: HTMLDivElement, events: EmulatorEv
     const commBus = v86Emulator.v86.cpu.devices.commBus as CommBus;
     commBus && commBus.sendData(data);
   }
+  function sendMousePos(x: number, y: number) {
+    const cmd = x | (y << 16);
+    const commBus = v86Emulator.v86.cpu.devices.commBus as CommBus;
+    commBus && commBus.sendDataMousePos(cmd);
+  }
+  function sendMouseEvt(command: MouseCommandType, param: number) {
+    const cmd = command | (param << 8);
+    const commBus = v86Emulator.v86.cpu.devices.commBus as CommBus;
+    commBus && commBus.sendDataMouseEvt(cmd);
+  }
 
   let seqNumber = 0;
   function getSeqNumber() {
@@ -225,19 +247,29 @@ export function initEmulator(screenContainer: HTMLDivElement, events: EmulatorEv
     startBridge() {
       v86Emulator.keyboard_send_scancodes([0x1d, 0x13]);
       v86Emulator.keyboard_send_scancodes([0x9d, 0x93]);
-      v86Emulator.keyboard_send_text('"c:\\windows\\start menu\\Programs\\StartUp\\bridge.exe"');
+      v86Emulator.keyboard_send_text('"c:\\windows\\bridge.exe"');
       v86Emulator.keyboard_send_scancodes([0x1c]);
       v86Emulator.keyboard_send_scancodes([0x9c]);
     },
 
     setMousePos(x: number, y: number) {
-      if (!emuState.ready) return;
-      sendSerial(
-        buildRemoteCommand(CommandType.Cmd_SetCursorPos, [
-          { type: DataType.Int, value: x },
-          { type: DataType.Int, value: y },
-        ]),
-      );
+      sendMousePos(x, y);
+    },
+
+    sendMouseEvent(down: boolean, button: 0 | 2) {
+      if (down) {
+        if (button === 0) {
+          sendMouseEvt(MouseCommandType.MouseCmd_LeftDown, 0);
+        } else if (button === 2) {
+          sendMouseEvt(MouseCommandType.MouseCmd_RightDown, 0);
+        }
+      } else {
+        if (button === 0) {
+          sendMouseEvt(MouseCommandType.MouseCmd_LeftUp, 0);
+        } else if (button === 2) {
+          sendMouseEvt(MouseCommandType.MouseCmd_RightUp, 0);
+        }
+      }
     },
 
     setWindowPos(id: number, x: number, y: number, w: number, h: number) {
@@ -439,20 +471,13 @@ export function initEmulator(screenContainer: HTMLDivElement, events: EmulatorEv
       );
     },
 
-    sendMouseEvent(down: boolean, button: 0 | 2) {
-      if (down) {
-        if (button === 0) {
-          sendSerial(buildRemoteCommand(CommandType.Cmd_MouseEvent, [{ type: DataType.UInt, value: 2 }]));
-        } else if (button === 2) {
-          sendSerial(buildRemoteCommand(CommandType.Cmd_MouseEvent, [{ type: DataType.UInt, value: 8 }]));
-        }
-      } else {
-        if (button === 0) {
-          sendSerial(buildRemoteCommand(CommandType.Cmd_MouseEvent, [{ type: DataType.UInt, value: 4 }]));
-        } else if (button === 2) {
-          sendSerial(buildRemoteCommand(CommandType.Cmd_MouseEvent, [{ type: DataType.UInt, value: 16 }]));
-        }
-      }
+    setResolution(w: number, h: number) {
+      sendSerial(
+        buildRemoteCommand(CommandType.Cmd_SetResolution, [
+          { type: DataType.Int, value: w },
+          { type: DataType.Int, value: h },
+        ]),
+      );
     },
   };
 

@@ -3,15 +3,18 @@ body {
   margin: 0;
   background-color: rgb(10, 128, 128);
   font-family: sans-serif;
+  width: 100%;
+  height: 100%;
 }
 
 #root {
-  display: flex;
-  /* flex-direction: column;
-  align-items: center; */
   margin: 16px;
+  border: 1px solid black;
+  width: calc(100% - 32px);
+  height: calc(100% - 32px);
 }
 
 .w95Window {
-  border: 1px solid black;
+  width: 100%;
+  height: 100%;
 }

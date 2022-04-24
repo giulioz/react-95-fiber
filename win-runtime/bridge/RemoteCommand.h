@@ -58,22 +58,16 @@ enum CommandType {
   Cmd_CreateFont = 15,
   Cmd_DeleteObject = 16,
   Cmd_ShowWindow = 17,
+  Cmd_SetResolution = 18,
 };
 
 struct RemoteCommand {
-  void *originalBuffer;
-  unsigned int originalSize;
   CommandType type;
   unsigned int nParams;
   DataItem *params;
-  RemoteCommand()
-      : originalBuffer(NULL), originalSize(0), type(Cmd_Invalid), nParams(0),
-        params(NULL) {}
-  RemoteCommand(void *originalBuffer, unsigned int originalSize,
-                CommandType type, unsigned int nParams, DataItem *params)
-      : originalBuffer(originalBuffer), originalSize(originalSize), type(type),
-        nParams(nParams), params(params) {}
-  RemoteCommand heapCopy();
+  RemoteCommand() : type(Cmd_Invalid), nParams(0), params(NULL) {}
+  RemoteCommand(CommandType type, unsigned int nParams, DataItem *params)
+      : type(type), nParams(nParams), params(params) {}
 };
 
 struct RemoteCommandHeader {
@@ -120,6 +114,5 @@ struct RemoteResponse {
 };
 
 RemoteCommand parseRemoteCommand(char *buffer, unsigned int size);
-void deallocRemoteCommand(RemoteCommand &command);
 
 #endif

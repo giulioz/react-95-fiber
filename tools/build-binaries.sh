@@ -1,9 +1,9 @@
 #!/bin/bash
 
 docker run --rm -v $(pwd):/prj giulioz/vc6-docker wine cmd /c z:/prj/win-runtime/bridge/build.bat
-rm -f win-runtime/filesystem/WINDOWS/Start\ Menu/Programs/StartUp/bridge.exe
-mkdir -p win-runtime/filesystem/WINDOWS/Start\ Menu/Programs/StartUp/
-mv -f win-runtime/bridge/bridge.exe win-runtime/filesystem/WINDOWS/Start\ Menu/Programs/StartUp/bridge.exe
+rm -f win-runtime/filesystem/WINDOWS/bridge.exe
+mkdir -p win-runtime/filesystem/WINDOWS/
+mv -f win-runtime/bridge/bridge.exe win-runtime/filesystem/WINDOWS/bridge.exe
 
 if test -f "win-runtime/filesystem/WINDOWS/SYSTEM.DAT"; then
   echo "Registry already exists, skipping"

@@ -1,9 +1,14 @@
 #include "SerialComm.h"
-#include <conio.h>
 #include <string.h>
+#include <windows.h>
 
 const unsigned short COMMBUS_PORT_IN = 0x500;
 const unsigned short COMMBUS_PORT_OUT = 0x504;
+
+extern "C" {
+unsigned long __cdecl _inpd(unsigned short);
+unsigned long __cdecl _outpd(unsigned short, unsigned long);
+}
 
 // GCC versions
 
@@ -27,7 +32,7 @@ const unsigned short COMMBUS_PORT_OUT = 0x504;
 //   return rv;
 // }
 
-void SendData(const char *data, unsigned long length) {
+void sendData(const char *data, unsigned long length) {
   for (unsigned long i = 0; i < length; i++) {
     unsigned long temp = data[i] & 0xFF;
     temp |= ((length - i) << 8);
@@ -36,7 +41,7 @@ void SendData(const char *data, unsigned long length) {
   _outpd(COMMBUS_PORT_OUT, 0);
 }
 
-unsigned long RecieveData(char *buffer) {
+unsigned long recieveData(char *buffer) {
   int i = 0;
   unsigned long temp = _inpd(COMMBUS_PORT_IN);
   char readData = temp & 0xFF;

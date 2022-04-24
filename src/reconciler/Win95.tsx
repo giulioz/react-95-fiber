@@ -1,4 +1,18 @@
-import React, { useRef, HTMLAttributes, useLayoutEffect, PropsWithChildren, createContext, ReactNode, useContext, forwardRef } from 'react';
+import React, {
+  useRef,
+  HTMLAttributes,
+  useLayoutEffect,
+  PropsWithChildren,
+  createContext,
+  ReactNode,
+  useContext,
+  forwardRef,
+  useState,
+  useCallback,
+} from 'react';
+import useMeasure from 'react-use-measure';
+import mergeRefs from 'react-merge-refs';
+import debounce from 'lodash/debounce';
 import { LOWORD } from '../emulator95/constants';
 import { Binaries, EmulatorAPI, EmulatorState, EventPayload, initEmulator, ResponseType } from '../emulator95/emulator';
 import { reconciler } from './reconciler';
@@ -31,7 +45,7 @@ interface Win95Props {
   binaries: Binaries;
 }
 
-export function render(element: ReactNode, rootDiv: HTMLDivElement, w95Props: Win95Props, binaries: Binaries) {
+export function render(element: ReactNode, rootDiv: HTMLDivElement, w95Props: Omit<Win95Props, 'binaries'>, binaries: Binaries) {
   const store = roots.get(rootDiv);
   let root = store?.root;
   const state = store?.state || {
@@ -97,12 +111,34 @@ export const Win95 = forwardRef<Win95Ref, PropsWithChildren<HTMLAttributes<HTMLD
 ) {
   const emulatorDivRef = useRef<HTMLDivElement>(null);
   const emulatorRef = useRef<Win95Ref>(null);
+  const [measureRef, bounds] = useMeasure();
+  const [ready, setReady] = useState(false);
 
   useLayoutEffect(() => {
-    emulatorRef.current = render(children, emulatorDivRef.current!, { onReady }, binaries);
+    emulatorRef.current = render(
+      children,
+      emulatorDivRef.current!,
+      {
+        onReady: () => {
+          setReady(true);
+          onReady?.();
+        },
+      },
+      binaries,
+    );
     if (typeof ref === 'function') ref(emulatorRef.current);
     else if (ref) ref.current = emulatorRef.current;
   }, [children, onReady]);
+
+  const debouncedUpdateRes = useCallback(
+    debounce((width: number, height: number) => emulatorRef.current?.api.setResolution(width, height), 300),
+    [],
+  );
+  useLayoutEffect(() => {
+    if (ready) {
+      debouncedUpdateRes(bounds.width, bounds.height);
+    }
+  }, [bounds, ready]);
 
   useLayoutEffect(() => {
     const container = emulatorDivRef.current!;
@@ -117,7 +153,7 @@ export const Win95 = forwardRef<Win95Ref, PropsWithChildren<HTMLAttributes<HTMLD
 
   return (
     <div
-      ref={emulatorDivRef}
+      ref={mergeRefs([emulatorDivRef, measureRef])}
       onContextMenu={e => e.preventDefault()}
       onMouseMove={handleMouseMove}
       onMouseDown={e => emulatorRef.current.api.sendMouseEvent(true, e.button as 0 | 2)}

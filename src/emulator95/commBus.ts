@@ -1,9 +1,14 @@
 export const COMMBUS_PORT_IN = 0x504;
 export const COMMBUS_PORT_OUT = 0x500;
+export const MOUSE_PORT_EVT = 0x508;
+export const MOUSE_PORT_POS = 0x512;
 
 export class CommBus {
   outQueue: number[][] = [];
   inQueue: number[] = [];
+
+  outQueueMouseEvt: number[] = [];
+  outMousePos: number = 0;
 
   constructor(cpu: any, onPacket: (pkg: ArrayBuffer) => void) {
     cpu.io.register_write(
@@ -44,10 +49,49 @@ export class CommBus {
         return byte | ((toSend.length + 1) << 8);
       },
     );
+
+    cpu.io.register_read(
+      MOUSE_PORT_EVT,
+      this,
+      () => {
+        console.warn('Invalid 8 bit read!');
+        return 0;
+      },
+      () => {
+        console.warn('Invalid 16 bit read!');
+        return 0;
+      },
+      () => {
+        const byte = this.outQueueMouseEvt.shift();
+        return byte || 0;
+      },
+    );
+
+    cpu.io.register_read(
+      MOUSE_PORT_POS,
+      this,
+      () => {
+        console.warn('Invalid 8 bit read!');
+        return 0;
+      },
+      () => {
+        console.warn('Invalid 16 bit read!');
+        return 0;
+      },
+      () => this.outMousePos,
+    );
   }
 
   sendData(buffer: ArrayBuffer) {
     const bytes = new Uint8ClampedArray(buffer);
     this.outQueue.push(Array.from(bytes));
+  }
+
+  sendDataMousePos(value: number) {
+    this.outMousePos = value;
+  }
+
+  sendDataMouseEvt(value: number) {
+    this.outQueueMouseEvt.push(value);
   }
 }

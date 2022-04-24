@@ -28,7 +28,10 @@
     "changeset:add": "changeset add"
   },
   "dependencies": {
+    "lodash": "^4.17.21",
+    "react-merge-refs": "^1.1.0",
     "react-reconciler": "^0.26.2",
+    "react-use-measure": "^2.1.1",
     "scheduler": "^0.20.2",
     "utility-types": "^3.10.0",
     "v86": "^0.3.6"
@@ -45,12 +48,14 @@
     "@babel/preset-typescript": "^7.14.5",
     "@changesets/changelog-git": "^0.1.7",
     "@changesets/cli": "^2.16.0",
+    "@originjs/vite-plugin-commonjs": "^1.0.3",
     "@react-spring/core": "^9.4.2",
     "@rollup/plugin-babel": "^5.2.0",
     "@rollup/plugin-commonjs": "^20.0.0",
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^13.0.4",
     "@types/jest": "^26.0.8",
+    "@types/lodash": "^4.14.182",
     "@types/node": "^16.4.13",
     "@types/react": "^17.0.14",
     "@types/react-dom": "^17.0.9",
