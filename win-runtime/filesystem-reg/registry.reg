@@ -2457,20 +2457,6 @@ REGEDIT4
 @="Hard disk controllers"
 "Icon"="-9"
 
-[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\hdc\0000]
-"DriverDesc"="Standard IDE/ESDI Hard Disk Controller"
-"DevLoader"="*IOS"
-"PortDriver"="ESDI_506.pdr"
-"InfPath"="MSHDC.INF"
-"InfSection"="BAD_IDE"
-
-[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\hdc\0001]
-"DriverDesc"="Standard IDE/ESDI Hard Disk Controller"
-"DevLoader"="*IOS"
-"PortDriver"="ESDI_506.pdr"
-"InfPath"="MSHDC.INF"
-"InfSection"="BAD_IDE"
-
 [HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\Mouse]
 @="Mouse"
 "Installer"="SetupX.Dll, Mouse_ClassInstaller"
@@ -3341,60 +3327,6 @@ higher than the actual number of bytes written may be reported."
 "0"=hex:00,04,00,00,00,e0,00,00,10,00,00,00,04,00,00,00,00,00,00,00,00,10,00,\
   00,00,00,00,00
 
-[HKEY_LOCAL_MACHINE\Enum\Root\*PNP0600]
-
-[HKEY_LOCAL_MACHINE\Enum\Root\*PNP0600\0000]
-"InfName"="MSHDC.INF"
-"DeviceDesc"="Standard IDE/ESDI Hard Disk Controller"
-"Class"="hdc"
-"HardwareID"="*PNP0600"
-"DetFunc"="*:DETECTESDI"
-"NoSetupUI"="1"
-"DetFlags"=hex:00,00,00,00
-"BootConfig"=hex:00,04,00,00,00,00,00,00,14,00,00,00,02,00,00,00,00,00,0c,00,\
-  f0,01,f7,01,00,00,00,03,14,00,00,00,02,00,00,00,00,00,0c,00,f6,03,f6,03,00,\
-  00,00,03,10,00,00,00,04,00,00,00,00,00,0e,00,00,00,00,00,00,00,00,00
-"VerifyKey"=hex:f0,01,00,06
-"Driver"="hdc\\0000"
-"Mfg"="(Standard hard disk drivers)"
-"ConfigFlags"=hex:00,00,00,00
-
-[HKEY_LOCAL_MACHINE\Enum\Root\*PNP0600\0000\LogConfig]
-"0"=hex:00,04,00,00,00,e0,00,00,20,00,00,00,02,00,00,00,01,00,0c,00,00,00,00,\
-  00,00,00,00,00,ff,ff,08,00,f0,01,f7,01,00,00,00,03,20,00,00,00,02,00,00,00,\
-  01,00,0c,00,00,00,00,00,00,00,00,00,ff,ff,01,00,f6,03,f6,03,00,00,00,03,10,\
-  00,00,00,04,00,00,00,01,00,00,00,00,40,00,00,00,00,00,00
-"1"=hex:00,04,00,00,00,e0,00,00,20,00,00,00,02,00,00,00,01,00,0c,00,00,00,00,\
-  00,00,00,00,00,ff,ff,08,00,70,01,77,01,00,00,00,03,20,00,00,00,02,00,00,00,\
-  01,00,0c,00,00,00,00,00,00,00,00,00,ff,ff,01,00,76,03,76,03,00,00,00,03,10,\
-  00,00,00,04,00,00,00,01,00,00,00,00,80,00,00,00,00,00,00
-
-[HKEY_LOCAL_MACHINE\Enum\Root\*PNP0600\0001]
-"InfName"="MSHDC.INF"
-"DeviceDesc"="Standard IDE/ESDI Hard Disk Controller"
-"Class"="hdc"
-"HardwareID"="*PNP0600"
-"DetFunc"="*:DETECTESDI"
-"NoSetupUI"="1"
-"DetFlags"=hex:00,00,00,00
-"BootConfig"=hex:00,04,00,00,00,00,00,00,14,00,00,00,02,00,00,00,00,00,0c,00,\
-  70,01,77,01,00,00,00,03,14,00,00,00,02,00,00,00,00,00,0c,00,76,03,76,03,00,\
-  00,00,03,10,00,00,00,04,00,00,00,00,00,0f,00,00,00,00,00,00,00,00,00
-"VerifyKey"=hex:70,01,00,06
-"Driver"="hdc\\0001"
-"Mfg"="(Standard hard disk drivers)"
-"ConfigFlags"=hex:00,00,00,00
-
-[HKEY_LOCAL_MACHINE\Enum\Root\*PNP0600\0001\LogConfig]
-"0"=hex:00,04,00,00,00,e0,00,00,20,00,00,00,02,00,00,00,01,00,0c,00,00,00,00,\
-  00,00,00,00,00,ff,ff,08,00,f0,01,f7,01,00,00,00,03,20,00,00,00,02,00,00,00,\
-  01,00,0c,00,00,00,00,00,00,00,00,00,ff,ff,01,00,f6,03,f6,03,00,00,00,03,10,\
-  00,00,00,04,00,00,00,01,00,00,00,00,40,00,00,00,00,00,00
-"1"=hex:00,04,00,00,00,e0,00,00,20,00,00,00,02,00,00,00,01,00,0c,00,00,00,00,\
-  00,00,00,00,00,ff,ff,08,00,70,01,77,01,00,00,00,03,20,00,00,00,02,00,00,00,\
-  01,00,0c,00,00,00,00,00,00,00,00,00,ff,ff,01,00,76,03,76,03,00,00,00,03,10,\
-  00,00,00,04,00,00,00,01,00,00,00,00,80,00,00,00,00,00,00
-
 [HKEY_LOCAL_MACHINE\Enum\Root\Display]
 
 [HKEY_LOCAL_MACHINE\Enum\Root\Display\0000]
@@ -3561,66 +3493,22 @@ higher than the actual number of bytes written may be reported."
 "DirectoryCols"=hex:78,00,3c,00,78,00,78,00
 "ShellState"=hex:10,00,00,00,03,00,00,00,00,00,00,00,00,00,00,00
 
-[HKEY_USERS\.Default\Software\Microsoft\Windows\CurrentVersion\Explorer\NewShortcutHandlers]
-"{FBF23B40-E3F0-101B-8488-00AA003E56F8}"=""
-
-[HKEY_USERS\.Default\Software\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders]
-
-[HKEY_USERS\.Default\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders]
-"Fonts"="C:\\WINDOWS\\Fonts"
-
 [HKEY_USERS\.Default\Software\Microsoft\Windows\CurrentVersion\Explorer\CabinetState]
 "Settings"=hex:0c,00,00,00,0a,00,00,00,60,00,00,00
-
-[HKEY_USERS\.Default\Software\Microsoft\Windows\CurrentVersion\Explorer\StreamMRU]
-"a"=hex:14,00,1f,00,e0,4f,d0,20,ea,3a,69,10,a2,d8,08,00,2b,30,30,9d,19,00,23,\
-  43,3a,5c,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,11,ee,17,00,31,\
-  00,00,00,00,00,67,54,f1,34,10,80,57,69,6e,64,6f,77,73,00,00,1e,00,31,00,00,\
-  00,00,00,66,54,4f,46,10,00,44,65,73,6b,74,6f,70,00,44,45,53,4b,54,4f,50,00,\
-  00,00
-"MRUList"="acdb"
-"b"=hex:14,00,1f,00,e0,4f,d0,20,ea,3a,69,10,a2,d8,08,00,2b,30,30,9d,19,00,23,\
-  43,3a,5c,00,00,a0,f6,18,00,00,00,00,00,e0,e2,16,00,00,00,00,11,ee,00,00
-"c"=hex:14,00,1f,00,e0,4f,d0,20,ea,3a,69,10,a2,d8,08,00,2b,30,30,9d,00,00
-"d"=hex:14,00,1f,00,e0,4f,d0,20,ea,3a,69,10,a2,d8,08,00,2b,30,30,9d,19,00,23,\
-  43,3a,5c,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,11,ee,20,00,31,\
-  00,00,00,00,00,67,54,2e,3e,10,00,31,34,30,32,31,34,20,32,00,31,34,30,32,31,\
-  34,7e,31,00,00,00
 
 [HKEY_USERS\.Default\Software\Microsoft\Windows\CurrentVersion\Explorer\Streams]
 
 [HKEY_USERS\.Default\Software\Microsoft\Windows\CurrentVersion\Explorer\Streams\0]
-"CabView"=hex:40,00,00,00,00,00,00,00,01,00,00,00,10,00,00,00,00,00,00,00,a0,\
-  18,00,00,00,00,00,00,fe,ff,ff,ff,b4,02,00,00,02,05,00,00,d2,02,00,00,04,1c,\
-  17,c1,06,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00
-"ViewView"=hex:1c,00,5e,81,01,00,00,00,00,00,00,00,00,00,1c,00,00,00,00,00,01,\
+"CabView"=hex:40,00,00,00,00,00,00,00,01,00,00,00,ff,ff,ff,ff,ff,ff,ff,ff,ff,\
+  ff,ff,ff,ff,ff,ff,ff,42,00,00,00,42,00,00,00,1e,01,00,00,69,01,00,00,01,00,\
+  00,00,00,00,00,00,c0,00,00,00,00,00,00,00,66,7e,5d,81
+"ViewView"=hex:1c,00,5d,81,01,00,00,00,00,00,00,00,00,00,1c,00,00,00,00,00,01,\
   00,00,00,ff,ff,ff,ff
 
 [HKEY_USERS\.Default\Software\Microsoft\Windows\CurrentVersion\Explorer\Streams\1]
 "CabView"=hex:40,00,00,00,00,00,00,00,01,00,00,00,ff,ff,ff,ff,ff,ff,ff,ff,ff,\
-  ff,ff,ff,ff,ff,ff,ff,00,00,00,00,00,00,00,00,09,01,00,00,db,00,00,00,01,00,\
-  00,00,00,00,00,00,c0,00,00,00,00,00,00,00,34,5c,70,81
-"ViewView"=hex:1c,00,70,81,01,00,00,00,00,00,00,00,00,00,1c,00,00,00,00,00,01,\
+  ff,ff,ff,ff,ff,ff,ff,58,00,00,00,58,00,00,00,61,01,00,00,7e,01,00,00,01,00,\
+  00,00,00,00,00,00,c0,00,00,00,00,00,00,00,64,7e,5d,81
+"ViewView"=hex:1c,00,5d,81,01,00,00,00,00,00,00,00,00,00,1c,00,00,00,00,00,01,\
   00,00,00,ff,ff,ff,ff
 
-[HKEY_USERS\.Default\Software\Microsoft\Windows\CurrentVersion\Explorer\Streams\2]
-"ViewView"=hex:1c,00,70,81,01,00,00,00,00,00,00,00,00,00,1c,00,00,00,00,00,01,\
-  00,00,00,ff,ff,ff,ff
-"CabView"=hex:40,00,00,00,00,00,00,00,01,00,00,00,ff,ff,ff,ff,ff,ff,ff,ff,ff,\
-  ff,ff,ff,ff,ff,ff,ff,96,01,00,00,62,00,00,00,9f,02,00,00,3d,01,00,00,01,00,\
-  00,00,00,00,00,00,c0,00,00,00,00,00,00,00,34,5c,70,81
-
-[HKEY_USERS\.Default\Software\Microsoft\Windows\CurrentVersion\Explorer\Streams\3]
-"CabView"=hex:40,00,00,00,00,00,00,00,01,00,00,00,ff,ff,ff,ff,ff,ff,ff,ff,ff,\
-  ff,ff,ff,ff,ff,ff,ff,2c,00,00,00,2c,00,00,00,0c,02,00,00,6d,01,00,00,03,00,\
-  00,00,00,00,00,00,c0,00,00,00,00,00,00,00,56,5c,70,81
-"ViewView"=hex:1c,00,70,81,03,00,00,00,00,00,00,00,00,00,1c,00,00,00,00,00,01,\
-  00,00,00,ff,ff,ff,ff
-
-[HKEY_USERS\.Default\Software\Microsoft\Windows\CurrentVersion\Explorer\DeskView]
-"Settings"=hex:01,00,00,00,20,00,00,00
-
-[HKEY_USERS\.Default\Software\Microsoft\Windows\CurrentVersion\Explorer\StuckRects]
-"Settings"=hex:38,00,00,00,00,05,00,00,d0,02,00,00,3e,00,00,00,3e,00,00,00,1e,\
-  00,00,00,1e,00,00,00,00,00,00,00,00,00,00,00,cc,01,00,00,80,02,00,00,e0,01,\
-  00,00,03,00,00,00,02,00,00,00
