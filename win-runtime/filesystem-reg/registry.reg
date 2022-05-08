@@ -2414,33 +2414,25 @@ REGEDIT4
 "InfSection"="SYSTEM_BOARD"
 "DriverDesc"="System board"
 
-[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\System\0007]
-"DevLoader"="*bios"
-"EnumPropPages"="sysclass.dll,EnumPropPages"
-"InfPath"="MACHINE.INF"
-"InfSection"="PNPBIOS_DRV"
-"DriverDesc"="Plug and Play BIOS"
-
-[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\System\0008]
-"EnumPropPages"="sysclass.dll,APMEnumPropPages"
-"InfPath"="MACHINE.INF"
-"InfSection"="APM_DRV"
-"DriverDesc"="Advanced Power Management support"
-
 [HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\Display]
 @="Display adapters"
 "Installer"="SetupX.Dll, Display_ClassInstaller"
 "Icon"="-1"
+"EnumDriverStack"="enumfile.dll,EnumDisplayDriverStack"
+"Link"="{4d36e968-e325-11ce-bfc1-08002be10318}"
 
 [HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\Display\0000]
-"InfPath"="OEM0.INF"
-"InfSection"="VGA"
-"DriverDesc"="JavaScript Standard Display Adapter"
+"InfPath"="UNKNOW~1.INF"
+"InfSection"="MyDriver.Install"
+"ProviderName"="Unknown"
+"DriverDesc"="QEMU Standard Display Adapter"
+"MatchingDeviceId"="PCI\\VEN_1234&DEV_1111"
 "Ver"="4.0"
 "DevLoader"="*vdd"
+"DriverDate"=" 3-25-2022"
 
 [HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\Display\0000\DEFAULT]
-"Mode"="8,640,480"
+"Mode"="32,640,480"
 "drv"="virtdisp.drv"
 "vdd"="*vdd,*vflatd"
 "RefreshRate"="-1"
@@ -2448,9 +2440,9 @@ REGEDIT4
 
 [HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\Display\0000\MODES]
 
-[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\Display\0000\MODES\8]
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\Display\0000\MODES\4]
 
-[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\Display\0000\MODES\8\640,480]
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\Display\0000\MODES\4\640,480]
 @=""
 
 [HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\hdc]
@@ -2475,8 +2467,6 @@ REGEDIT4
 [HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\VxD\IOS]
 "StaticVxD"="*IOS"
 "Start"=hex:00
-
-[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\VxD\VPOWERD]
 
 [HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\VxD\VNETSUP]
 
@@ -2598,10 +2588,6 @@ REGEDIT4
 
 [HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\VxD\PERF]
 "StaticVxD"="*PERF"
-"Start"=hex:00
-
-[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\VxD\BIOS]
-"StaticVxD"="*BIOS"
 "Start"=hex:00
 
 [HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\VxD\VMM]
@@ -2850,9 +2836,7 @@ REGEDIT4
 "vmcpd.vxd"=hex:00
 "vtdapi.vxd"=hex:00
 "perf.vxd"=hex:00
-"bios.vxd"=hex:00
 "vkd.vxd"=hex:00
-"vpowerd.vxd"=hex:00
 
 [HKEY_LOCAL_MACHINE\System\CurrentControlSet\control\PwdProvider]
 
@@ -2894,7 +2878,6 @@ REGEDIT4
 "KEYBOARD.DRV"=hex:eb,1e,40,4e,00,00,00,00,20,00,00,00,00,00,90,31,00,00
 "mouse.drv"=hex:eb,1e,40,4e,00,00,00,00,20,00,00,00,00,00,20,1e,00,00
 "msmouse.vxd"=hex:eb,1e,40,4e,00,00,00,00,20,00,00,00,00,00,bc,3d,00,00
-"bios.vxd"=hex:eb,1e,40,4e,00,00,00,00,20,00,00,00,00,00,49,80,00,00
 
 [HKEY_LOCAL_MACHINE\System\CurrentControlSet\control\TimeZoneInformation]
 "ActiveTimeBias"=hex:e0,01,00,00
@@ -3273,40 +3256,6 @@ higher than the actual number of bytes written may be reported."
   01,00,0c,00,00,00,00,00,00,00,00,00,ff,ff,01,00,64,00,64,00,00,00,00,ff,10,\
   00,00,00,04,00,00,00,00,00,00,00,02,00,00,00,00,00,00,00
 
-[HKEY_LOCAL_MACHINE\Enum\Root\*PNP0C00]
-
-[HKEY_LOCAL_MACHINE\Enum\Root\*PNP0C00\0000]
-"InfName"="MACHINE.INF"
-"DeviceDesc"="Plug and Play BIOS"
-"Class"="System"
-"HardwareID"="*PNP0C00"
-"DetFunc"="*:DETECTBUS"
-"NoSetupUI"="1"
-"DetFlags"=hex:00,00,00,00
-"VerifyKey"=hex:50,50,42,00
-"PnPBIOSVer"=hex:10
-"PnPStrucOffset"=hex:60,60
-"Driver"="System\\0007"
-"Mfg"="(Standard system devices)"
-"ConfigFlags"=hex:00,00,00,00
-
-[HKEY_LOCAL_MACHINE\Enum\Root\*PNP0C05]
-
-[HKEY_LOCAL_MACHINE\Enum\Root\*PNP0C05\0000]
-"InfName"="MACHINE.INF"
-"DeviceDesc"="Advanced Power Management support"
-"Class"="System"
-"HardwareID"="*PNP0C05"
-"DetFunc"="*:DETECTAPMBIOS"
-"DetFlags"=hex:00,00,00,00
-"VerifyKey"=hex:41,50,4d,42
-"APMBiosVer"=hex:02,01
-"APMFlags"=hex:03,00
-"APMMenuSuspend"=hex:00
-"Driver"="System\\0008"
-"Mfg"="(Standard system devices)"
-"ConfigFlags"=hex:00,00,00,00
-
 [HKEY_LOCAL_MACHINE\Enum\Root\*PNP0F0E]
 
 [HKEY_LOCAL_MACHINE\Enum\Root\*PNP0F0E\0000]
@@ -3327,18 +3276,33 @@ higher than the actual number of bytes written may be reported."
 "0"=hex:00,04,00,00,00,e0,00,00,10,00,00,00,04,00,00,00,00,00,00,00,00,10,00,\
   00,00,00,00,00
 
-[HKEY_LOCAL_MACHINE\Enum\Root\Display]
+[HKEY_LOCAL_MACHINE\Enum\Root\*PNP0900]
 
-[HKEY_LOCAL_MACHINE\Enum\Root\Display\0000]
-"Class"="DISPLAY"
-"Driver"="Display\\0000"
-"Mfg"="react-95-fiber"
-"DeviceDesc"="JavaScript Standard Display Adapter"
-"ConfigFlags"=hex:00,00,00,00
+[HKEY_LOCAL_MACHINE\Enum\Root\*PNP0900\0000]
+"InfName"="MSDISP.INF"
+"DeviceDesc"="Standard Display Adapter (VGA)"
+"Class"="Display"
 "HardwareID"="*PNP0900"
+"DetFunc"="*:DETECTVGA"
+"DetFlags"=hex:00,00,00,00
+"BootConfig"=hex:0a,04,00,00,00,00,00,00,14,00,00,00,02,00,00,00,00,00,0c,00,\
+  b0,03,bb,03,00,00,00,03,14,00,00,00,02,00,00,00,00,00,0c,00,c0,03,df,03,00,\
+  00,00,03,18,00,00,00,01,00,00,00,00,00,14,00,00,00,0a,00,ff,ff,0a,00,00,00,\
+  00,00,18,00,00,00,01,00,00,00,00,00,14,00,00,80,0b,00,ff,ff,0b,00,00,00,00,\
+  00,00,00,00,00
+"VerifyKey"=hex:ff,ff,ff,ff,00,00,00,00,00,00
+"Capabilities"=hex:14,00,00,00
+"ClassGUID"="{4d36e968-e325-11ce-bfc1-08002be10318}"
+"Driver"="Display\\0000"
+"Mfg"="(Standard display types)"
+"ConfigFlags"=hex:00,00,00,00
+"FailReasonString"="None"
+"FailReason"=dword:00000000
+"FailReasonID"=dword:00000100
+"InitAdapterPowerState"="01"
 
-[HKEY_LOCAL_MACHINE\Enum\Root\Display\0000\LogConfig]
-"0"=hex:00,04,00,00,00,e0,00,00,20,00,00,00,02,00,00,00,01,00,0c,00,00,00,00,\
+[HKEY_LOCAL_MACHINE\Enum\Root\*PNP0900\0000\LogConfig]
+"0"=hex:0a,04,00,00,00,e0,00,00,20,00,00,00,02,00,00,00,01,00,0c,00,00,00,00,\
   00,00,00,00,00,ff,ff,0c,00,b0,03,bb,03,00,00,00,03,20,00,00,00,02,00,00,00,\
   01,00,0c,00,00,00,00,00,00,00,00,00,ff,ff,20,00,c0,03,df,03,00,00,00,03,2c,\
   00,00,00,01,00,00,00,01,00,14,00,00,00,00,00,00,00,00,00,00,00,00,00,00,f0,\
@@ -3511,4 +3475,10 @@ higher than the actual number of bytes written may be reported."
   00,00,00,00,00,00,c0,00,00,00,00,00,00,00,64,7e,5d,81
 "ViewView"=hex:1c,00,5d,81,01,00,00,00,00,00,00,00,00,00,1c,00,00,00,00,00,01,\
   00,00,00,ff,ff,ff,ff
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\System\0008]
+"DevLoader"="*vcomm"
+"PortDriver"="js.vxd"
+"PortSubClass"=hex:01
+"DriverDesc"="JavaScript Runtime Bridge"
 
