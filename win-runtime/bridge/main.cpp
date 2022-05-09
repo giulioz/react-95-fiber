@@ -6,7 +6,6 @@
 #include <vector>
 #include <windows.h>
 
-#include "MouseReceiver.h"
 #include "RemoteCommand.h"
 #include "SerialComm.h"
 

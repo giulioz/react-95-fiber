@@ -88,9 +88,9 @@ typedef struct Mouse_Instance {
 
 #define BUTTON_LEFT_Bit 5
 #define BUTTON_LEFT 1 << BUTTON_LEFT_Bit
-#define BUTTON_MIDDLE_Bit 4
+#define BUTTON_MIDDLE_Bit 3
 #define BUTTON_MIDDLE 1 << BUTTON_MIDDLE_Bit
-#define BUTTON_RIGHT_Bit 3
+#define BUTTON_RIGHT_Bit 4
 #define BUTTON_RIGHT 1 << BUTTON_RIGHT_Bit
 
 void VXDINLINE Post_Absolute_Pointer_Message(DWORD posX, DWORD posY, BYTE event) {
