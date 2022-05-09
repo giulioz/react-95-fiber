@@ -86,11 +86,25 @@ typedef struct Mouse_Instance {
 #define MIF_OTHERMOUSE_Bit 1
 #define MIF_OTHERMOUSE 1 << MIF_OTHERMOUSE_Bit
 
-void VXDINLINE Post_Absolute_Pointer_Message(DWORD poxX, DWORD poxY) {
-  _asm    mov esi, poxX;
-  _asm    mov edi, poxY;
-  _asm    xor al, al;
+#define BUTTON_LEFT_Bit 5
+#define BUTTON_LEFT 1 << BUTTON_LEFT_Bit
+#define BUTTON_MIDDLE_Bit 4
+#define BUTTON_MIDDLE 1 << BUTTON_MIDDLE_Bit
+#define BUTTON_RIGHT_Bit 3
+#define BUTTON_RIGHT 1 << BUTTON_RIGHT_Bit
+
+void VXDINLINE Post_Absolute_Pointer_Message(DWORD posX, DWORD posY, BYTE event) {
+  _asm    mov esi, posX;
+  _asm    mov edi, posY;
+  _asm    mov al, event;
   VxDCall(VMD_Post_Absolute_Pointer_Message);
+}
+
+void VXDINLINE Post_Pointer_Message(BYTE event) {
+  _asm    mov esi, 0;
+  _asm    mov edi, 0;
+  _asm    mov al, event;
+  VxDCall(VMD_Post_Pointer_Message);
 }
 
 DWORD VXDINLINE Get_Mouse_Data() {

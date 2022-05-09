@@ -6,6 +6,7 @@ clean:
 	del *.vxd
 	del *.obj
 	del *.lib
+	del *.exp
 	del driver.asm
 
 jsmouse.vxd: jsmouse.obj driver.obj

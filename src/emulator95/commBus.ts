@@ -95,5 +95,7 @@ export class CommBus {
 
   sendDataMouseEvt(value: number) {
     this.outQueueMouseEvt.push(value);
+    this.cpu.device_lower_irq(12);
+    this.cpu.device_raise_irq(12);
   }
 }
