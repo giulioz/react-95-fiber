@@ -209,8 +209,6 @@ char szClassName[] = "WindowsApp";
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
                    LPSTR lpCmdLine, int nShowCmd) {
-  startMouseReceiver();
-
   NONCLIENTMETRICS metrics;
   metrics.cbSize = sizeof(NONCLIENTMETRICS);
   SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(NONCLIENTMETRICS),
@@ -233,8 +231,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
       processRemoteCommand(cmd);
     }
   }
-
-  stopMouseReceiver();
 
   return messages.wParam;
 }

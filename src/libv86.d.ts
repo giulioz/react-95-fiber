@@ -18,6 +18,7 @@ type V86StarterOptions = {
   vga_memory_size?: number;
   disable_mouse?: boolean;
   disable_keyboard?: boolean;
+  disable_floppy?: boolean;
   autostart?: boolean;
   network_relay_url?: string;
   cdrom?: URLOrArrayBuffer;

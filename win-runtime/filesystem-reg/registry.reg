@@ -2358,7 +2358,7 @@ REGEDIT4
 [HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\Keyboard\0000]
 "InfPath"="keyboard.inf"
 "InfSection"="PC_AT_Enh_Inst"
-"DriverDesc"="Standard 101/102-Key or Microsoft Natural Keyboard"
+"DriverDesc"="HTML Keyboard Events Adapter"
 
 [HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\System]
 @="System devices"
@@ -2456,11 +2456,8 @@ REGEDIT4
 
 [HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\Mouse\0000]
 "DevLoader"="*vmouse"
-"MouseType"="PS2"
-"NoSetupUI"="1"
-"InfPath"="msmouse.inf"
-"InfSection"="StdPS2"
-"DriverDesc"="Standard PS/2 Port Mouse"
+"MouseDriver"="jsmouse.vxd"
+"DriverDesc"="HTML Pointer Events Adapter"
 
 [HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\VxD]
 
@@ -2608,9 +2605,6 @@ REGEDIT4
   00,00,00,90,25,c0,00,90,25,c0,00,00,00,00,00,90,25,c0,00,90,25,c0,00,00,00,\
   00,00,90,25,c0,00,90,25,c0,00,00,00,00
 "DOSPager"=hex:01
-
-[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\VxD\VMD]
-"MouseType"="PS2"
 
 [HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Winsock]
 
@@ -2877,7 +2871,6 @@ REGEDIT4
 "SUPERVGA.DRV"=hex:eb,1e,40,4e,00,00,00,00,20,00,00,00,00,00,60,cc,00,00
 "KEYBOARD.DRV"=hex:eb,1e,40,4e,00,00,00,00,20,00,00,00,00,00,90,31,00,00
 "mouse.drv"=hex:eb,1e,40,4e,00,00,00,00,20,00,00,00,00,00,20,1e,00,00
-"msmouse.vxd"=hex:eb,1e,40,4e,00,00,00,00,20,00,00,00,00,00,bc,3d,00,00
 
 [HKEY_LOCAL_MACHINE\System\CurrentControlSet\control\TimeZoneInformation]
 "ActiveTimeBias"=hex:e0,01,00,00
@@ -3236,7 +3229,7 @@ higher than the actual number of bytes written may be reported."
 
 [HKEY_LOCAL_MACHINE\Enum\Root\*PNP0303\0000]
 "InfName"="KEYBOARD.INF"
-"DeviceDesc"="Standard 101/102-Key or Microsoft Natural Keyboard"
+"DeviceDesc"="HTML Keyboard Events Adapter"
 "Class"="Keyboard"
 "HardwareID"="*PNP0303"
 "DetFunc"="*:DETECTKBD"
@@ -3260,7 +3253,7 @@ higher than the actual number of bytes written may be reported."
 
 [HKEY_LOCAL_MACHINE\Enum\Root\*PNP0F0E\0000]
 "InfName"="MSMOUSE.INF"
-"DeviceDesc"="Standard PS/2 Port Mouse"
+"DeviceDesc"="HTML Pointer Events Adapter"
 "Class"="Mouse"
 "HardwareID"="*PNP0F0E"
 "DetFunc"="*:DETECTPS2MOUSE"
@@ -3280,7 +3273,7 @@ higher than the actual number of bytes written may be reported."
 
 [HKEY_LOCAL_MACHINE\Enum\Root\*PNP0900\0000]
 "InfName"="MSDISP.INF"
-"DeviceDesc"="Standard Display Adapter (VGA)"
+"DeviceDesc"="HTML Canvas Display Adapter"
 "Class"="Display"
 "HardwareID"="*PNP0900"
 "DetFunc"="*:DETECTVGA"
@@ -3475,10 +3468,3 @@ higher than the actual number of bytes written may be reported."
   00,00,00,00,00,00,c0,00,00,00,00,00,00,00,64,7e,5d,81
 "ViewView"=hex:1c,00,5d,81,01,00,00,00,00,00,00,00,00,00,1c,00,00,00,00,00,01,\
   00,00,00,ff,ff,ff,ff
-
-[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\System\0008]
-"DevLoader"="*vcomm"
-"PortDriver"="js.vxd"
-"PortSubClass"=hex:01
-"DriverDesc"="JavaScript Runtime Bridge"
-

@@ -17,6 +17,9 @@ yarn-error.log
 __tests__/__image_snapshots__/__diff_output__
 .parcel-cache
 *.exe
+*.lib
+*.vxd
+*.exp
 *.o
 *.img
 .parcel-cache
@@ -25,6 +28,7 @@ __tests__/__image_snapshots__/__diff_output__
 !win-runtime/filesystem-reg/**/*
 !win-runtime/utils
 win-runtime/filesystem/**/bridge.exe
+win-runtime/filesystem/**/jsmouse.vxd
 win-runtime/filesystem/**/SYSTEM.DAT
 win-runtime/filesystem/**/USER.DAT
 .vscode

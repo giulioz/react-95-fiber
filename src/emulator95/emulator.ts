@@ -177,6 +177,7 @@ export function initEmulator(screenContainer: HTMLDivElement, events: EmulatorEv
     // initial_state: options.fromState && { url: './state.bin' },
     boot_order: 0x132,
     memory_size: 32 * 1024 * 1024,
+    disable_floppy: true,
     disable_mouse: true,
     // disable_keyboard: true,
     autostart: options.fromState || true,
@@ -253,7 +254,8 @@ export function initEmulator(screenContainer: HTMLDivElement, events: EmulatorEv
     },
 
     setMousePos(x: number, y: number) {
-      sendMousePos(x, y);
+      const bounds = screenContainer.getBoundingClientRect();
+      sendMousePos(Math.round((x / bounds.width) * 0xffff), Math.round((y / bounds.height) * 0xffff));
     },
 
     sendMouseEvent(down: boolean, button: 0 | 2) {
