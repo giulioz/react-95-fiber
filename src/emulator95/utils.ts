@@ -76,3 +76,19 @@ export function translateVirtualToPhysical(address: number, cpu: any) {
   }
   return address;
 }
+
+const decoder = new TextDecoder();
+export function readMemString(cpu: any, ptr: number, length: number) {
+  return decoder.decode(cpu.mem8.slice(ptr, ptr + length).buffer).replace('\u0000', '');
+}
+
+const encoder = new TextEncoder();
+export function writeMemString(cpu: any, ptr: number, str: string) {
+  const encoded = encoder.encode(str);
+  let i;
+  for (i = 0; i < encoded.length; i++) {
+    const char = encoded[i];
+    cpu.mem8[ptr + i] = char;
+  }
+  cpu.mem8[ptr + i] = 0;
+}

@@ -10,7 +10,7 @@ clean:
 	del driver.asm
 
 jsmouse.vxd: jsmouse.obj driver.obj
-	link -vxd -nodefaultlib -def:jsmouse.def -out:jsmouse.vxd jsmouse.obj driver.obj
+	link -nologo -vxd -nodefaultlib -def:jsmouse.def -out:jsmouse.vxd jsmouse.obj driver.obj
 
 jsmouse.obj: jsmouse.asm
 	ml -coff -c -Cx -DMASM6 -DBLD_COFF -DIS_32 $(INCS) jsmouse.asm

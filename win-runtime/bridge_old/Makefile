@@ -2,8 +2,8 @@ CPP  = cl -nologo
 CC   = cl -nologo
 LINK  = link -nologo
 RES  = 
-OBJ  = main.obj interop.obj $(RES)
-LINKOBJ  = main.obj interop.obj $(RES)
+OBJ  = main.obj SerialComm.obj RemoteCommand.obj interop.obj $(RES)
+LINKOBJ  = main.obj SerialComm.obj RemoteCommand.obj interop.obj $(RES)
 LIBS = /SUBSYSTEM:WINDOWS /LIBPATH:Z:\opt\vc\LIB user32.lib gdi32.lib shell32.lib
 INCS =  /IZ:\opt\vc\INCLUDE /IZ:\prj\win-runtime\common
 CXXINCS =  /IZ:\opt\vc\INCLUDE /IZ:\prj\win-runtime\common
@@ -25,3 +25,9 @@ main.obj: main.cpp
 
 interop.obj: ..\common\interop.c
 	$(CPP) /c ..\common\interop.c /Feinterop.obj $(CXXFLAGS)
+
+SerialComm.obj: SerialComm.cpp
+	$(CPP) /c SerialComm.cpp /FeSerialComm.obj $(CXXFLAGS)
+
+RemoteCommand.obj: RemoteCommand.cpp
+	$(CPP) /c RemoteCommand.cpp /FeRemoteCommand.obj $(CXXFLAGS)

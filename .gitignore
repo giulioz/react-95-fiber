@@ -28,6 +28,8 @@ __tests__/__image_snapshots__/__diff_output__
 !win-runtime/filesystem-reg/**/*
 !win-runtime/utils
 win-runtime/filesystem/**/bridge.exe
+win-runtime/filesystem/**/opengl32.dll
+win-runtime/filesystem/**/jscomm.vxd
 win-runtime/filesystem/**/jsmouse.vxd
 win-runtime/filesystem/**/SYSTEM.DAT
 win-runtime/filesystem/**/USER.DAT

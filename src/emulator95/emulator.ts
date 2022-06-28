@@ -1,5 +1,7 @@
 import { V86Starter } from 'v86';
 import { CommBus } from './commBus';
+import { MouseAdapter } from './MouseAdapter';
+import { RpcAdapter } from './RpcAdapter';
 
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
@@ -186,21 +188,23 @@ export function initEmulator(screenContainer: HTMLDivElement, events: EmulatorEv
   (window as any).emulator = v86Emulator;
 
   v86Emulator.add_listener('emulator-started', () => {
-    v86Emulator.v86.cpu.devices.commBus = new CommBus(v86Emulator.v86.cpu, pkg => {
-      const parsed = parseEventPayload(pkg);
-      if (!parsed) return;
+    // v86Emulator.v86.cpu.devices.commBus = new CommBus(v86Emulator.v86.cpu, pkg => {
+    //   const parsed = parseEventPayload(pkg);
+    //   if (!parsed) return;
 
-      events.onEvent?.(parsed);
-      if ((parsed.type === ResponseType.Res_CmdOutputHandle || parsed.type === ResponseType.Res_CmdOutputLong) && seqListeners.has(parsed.seq)) {
-        seqListeners.get(parsed.seq)?.(parsed);
-        seqListeners.delete(parsed.seq);
-      }
+    //   events.onEvent?.(parsed);
+    //   if ((parsed.type === ResponseType.Res_CmdOutputHandle || parsed.type === ResponseType.Res_CmdOutputLong) && seqListeners.has(parsed.seq)) {
+    //     seqListeners.get(parsed.seq)?.(parsed);
+    //     seqListeners.delete(parsed.seq);
+    //   }
 
-      if (!emuState.ready) {
-        events.onReady?.();
-        emuState.ready = true;
-      }
-    });
+    //   if (!emuState.ready) {
+    //     events.onReady?.();
+    //     emuState.ready = true;
+    //   }
+    // });
+    v86Emulator.v86.cpu.devices.rpcAdapter = new RpcAdapter(v86Emulator.v86.cpu);
+    v86Emulator.v86.cpu.devices.mouseAdapter = new MouseAdapter(v86Emulator.v86.cpu);
   });
 
   const emuState: EmulatorState = {
@@ -214,13 +218,13 @@ export function initEmulator(screenContainer: HTMLDivElement, events: EmulatorEv
   }
   function sendMousePos(x: number, y: number) {
     const cmd = x | (y << 16);
-    const commBus = v86Emulator.v86.cpu.devices.commBus as CommBus;
-    commBus && commBus.sendDataMousePos(cmd);
+    const mouseAdapter = v86Emulator.v86.cpu.devices.mouseAdapter as MouseAdapter;
+    mouseAdapter && mouseAdapter.sendDataMousePos(cmd);
   }
   function sendMouseEvt(command: MouseCommandType, param: number) {
     const cmd = command | (param << 8);
-    const commBus = v86Emulator.v86.cpu.devices.commBus as CommBus;
-    commBus && commBus.sendDataMouseEvt(cmd);
+    const mouseAdapter = v86Emulator.v86.cpu.devices.mouseAdapter as MouseAdapter;
+    mouseAdapter && mouseAdapter.sendDataMouseEvt(cmd);
   }
 
   let seqNumber = 0;
@@ -244,14 +248,6 @@ export function initEmulator(screenContainer: HTMLDivElement, events: EmulatorEv
 
   const api = {
     sendSerial,
-
-    startBridge() {
-      v86Emulator.keyboard_send_scancodes([0x1d, 0x13]);
-      v86Emulator.keyboard_send_scancodes([0x9d, 0x93]);
-      v86Emulator.keyboard_send_text('"c:\\windows\\bridge.exe"');
-      v86Emulator.keyboard_send_scancodes([0x1c]);
-      v86Emulator.keyboard_send_scancodes([0x9c]);
-    },
 
     setMousePos(x: number, y: number) {
       const bounds = screenContainer.getBoundingClientRect();
