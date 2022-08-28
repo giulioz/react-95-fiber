@@ -77,8 +77,28 @@ export function translateVirtualToPhysical(address: number, cpu: any) {
   return address;
 }
 
+export function translatePhysicalToVirtual(address: number, cpu: any) {
+  const pages = getPageDirectory(cpu);
+  for (let i = 0; i < pages.length; i++) {
+    const page = pages[i];
+    const lower = address ^ page.phys;
+    if (lower <= 0xfff) {
+      return page.virt | lower;
+    }
+  }
+  return address;
+}
+
 const decoder = new TextDecoder();
-export function readMemString(cpu: any, ptr: number, length: number) {
+export function readMemString(cpu: any, ptr: number, length?: number) {
+  if (!length) {
+    length = 0;
+    let ptrCopy = ptr;
+    while (cpu.mem8[ptrCopy]) {
+      ptrCopy++;
+      length++;
+    }
+  }
   return decoder.decode(cpu.mem8.slice(ptr, ptr + length).buffer).replace('\u0000', '');
 }
 
@@ -91,4 +111,43 @@ export function writeMemString(cpu: any, ptr: number, str: string) {
     cpu.mem8[ptr + i] = char;
   }
   cpu.mem8[ptr + i] = 0;
+}
+
+export function writeMemSet(cpu: any, ptr: number, value: number, length: number) {
+  for (let i = 0; i < length; i++) {
+    cpu.mem8[ptr + i] = value;
+  }
+}
+
+export function readMemFloat(cpu: any, ptr: number) {
+  const slice = cpu.mem8.slice(ptr, ptr + 4).buffer;
+  return new DataView(slice).getFloat32(0, true);
+}
+
+export function createMutex() {
+  let owner: any = null;
+  const waiters: (() => Promise<void> | void)[] = [];
+
+  function lock() {
+    const myId = {};
+    if (owner === null) {
+      owner = myId;
+      return;
+    } else {
+      return new Promise<void>(r => waiters.push(r));
+    }
+  }
+
+  function unlock() {
+    if (waiters.length > 0) {
+      const nextFn = waiters[0];
+      waiters.splice(0, 1);
+      owner = nextFn;
+      nextFn();
+    } else {
+      owner = null;
+    }
+  }
+
+  return { lock, unlock };
 }

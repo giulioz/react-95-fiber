@@ -1,22 +1,23 @@
 #include "basedef.h"
 #include "vmm.h"
-#include "vpicd.h"
 #include "shell.h"
+#include "vpicd.h"
+#include "vwin32.h"
 
-typedef struct DIOCParams {
-  DWORD Internal1;  // ptr to client regs
-  DWORD VMHandle;   // VM handle
-  DWORD Internal2;  // DDB
-  DWORD dwIoControlCode;
-  DWORD lpvInBuffer;
-  DWORD cbInBuffer;
-  DWORD lpvOutBuffer;
-  DWORD cbOutBuffer;
-  DWORD lpcbBytesReturned;
-  DWORD lpoOverlapped;
-  DWORD hDevice;
-  DWORD tagProcess;
-} DIOCPARAMETERS;
+// typedef struct DIOCParams {
+//   DWORD Internal1;  // ptr to client regs
+//   DWORD VMHandle;   // VM handle
+//   DWORD Internal2;  // DDB
+//   DWORD dwIoControlCode;
+//   DWORD lpvInBuffer;
+//   DWORD cbInBuffer;
+//   DWORD lpvOutBuffer;
+//   DWORD cbOutBuffer;
+//   DWORD lpcbBytesReturned;
+//   DWORD lpoOverlapped;
+//   DWORD hDevice;
+//   DWORD tagProcess;
+// } DIOCPARAMETERS;
 typedef DIOCPARAMETERS* LPDIOC;
 
 #define BSF_POSTMESSAGE 0x00000010
@@ -29,7 +30,8 @@ static HVM m_SysVmHandle;
 static VID irqDesc = {0};
 static DWORD irqHandle;
 
-static unsigned long handle = 0;
+static PVOID callback = 0;
+static PTCB appThread;
 
 static char buf[32] = {0};
 char* itoa(int val, int base) {
@@ -67,16 +69,29 @@ void ShellOpen() {
   _asm add esp, 4;
 }
 
-void _cdecl AppyCallback(DWORD data) {
-  SHELL_BroadcastSystemMessage(BSF_POSTMESSAGE | BSF_FORCEIFHUNG, NULL, WM_DEVICECHANGE, 0, 0);
+DWORD VXDINLINE Get_Cur_Thread_Handle_Fn() {
+  DWORD hThread;
+  VxDCall(Get_Cur_Thread_Handle);
+  _asm mov [hThread], edi;
+  return hThread;
 }
 
 void IntProc() {
-  SHELL_CallAtAppyTime(AppyCallback, 0, 0, 0);
+  if (callback) {
+    _asm push appThread;
+    _asm push 0;
+    _asm push callback;
+    Touch_Register(eax);
+    Touch_Register(ecx);
+    Touch_Register(edx);
+    VxDCall(_VWIN32_QueueUserApc);
+    _asm add esp, 3 * 4;
+  }
+
+  VPICD_Phys_EOI(irqHandle);
 
   // SHELL_SYSMODAL_Message(m_SysVmHandle, 0, itoa(handle, 16), "JSComm");
   // SHELL_SYSMODAL_Message(m_SysVmHandle, 0, "Received", "JSComm");
-  VPICD_Phys_EOI(irqHandle);
 }
 
 BOOL _cdecl JSComm_DeviceInit() {
@@ -99,7 +114,8 @@ DWORD _stdcall JSComm_DeviceIOControl(DWORD dwService, DWORD dwDDB,
   DWORD dwRetVal = 0;
 
   if (lpDIOCParms->dwIoControlCode == 1) {
-    handle = *((unsigned long*)lpDIOCParms->lpvInBuffer);
+    appThread = Get_Cur_Thread_Handle_Fn();
+    callback = lpDIOCParms->lpvInBuffer;
   }
 
   return (dwRetVal);
