@@ -6,9 +6,9 @@ mkdir -p win-runtime/filesystem/WINDOWS/
 mv -f win-runtime/bridge/bridge.exe win-runtime/filesystem/WINDOWS/bridge.exe
 
 docker run --rm -v $(pwd):/prj giulioz/vc6-docker wine cmd /c z:/prj/win-runtime/opengl32/build.bat
-rm -f win-runtime/filesystem/WINDOWS/opengl32.dll
-mkdir -p win-runtime/filesystem/WINDOWS/
-mv -f win-runtime/opengl32/opengl32.dll win-runtime/filesystem/WINDOWS/SYSTEM/opengl32.dll
+rm -f win-runtime/filesystem-optional/WINDOWS/opengl32.dll
+mkdir -p win-runtime/filesystem-optional/WINDOWS/
+mv -f win-runtime/opengl32/opengl32.dll win-runtime/filesystem-optional/WINDOWS/SYSTEM/opengl32.dll
 
 # docker run --rm -v $(pwd):/prj giulioz/vc6-docker wine cmd /c z:/prj/win-runtime/glu32/build.bat
 # rm -f win-runtime/filesystem/WINDOWS/glu32.dll

@@ -2432,7 +2432,7 @@ REGEDIT4
 "DriverDate"=" 3-25-2022"
 
 [HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\Display\0000\DEFAULT]
-"Mode"="32,640,480"
+"Mode"="32,1024,768"
 "drv"="virtdisp.drv"
 "vdd"="*vdd,*vflatd"
 "RefreshRate"="-1"
@@ -2443,6 +2443,11 @@ REGEDIT4
 [HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\Display\0000\MODES\4]
 
 [HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\Display\0000\MODES\4\640,480]
+@=""
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\Display\0000\MODES\32]
+
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\Display\0000\MODES\32\1024,768]
 @=""
 
 [HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\Class\hdc]
@@ -2476,10 +2481,6 @@ REGEDIT4
 "DetectFunc"="DMRedetect"
 "Private"="SYSDM.CPL"
 "PrivateFunc"="DMPrivateProblem"
-
-[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\VxD\VSHARE]
-"StaticVxD"="*VSHARE"
-"Start"=hex:00
 
 [HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\VxD\VWIN32]
 "StaticVxD"="*VWIN32"
@@ -2557,10 +2558,6 @@ REGEDIT4
 
 [HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\VxD\DOSMGR]
 "StaticVxD"="*DOSMGR"
-"Start"=hex:00
-
-[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\VxD\VMPOLL]
-"StaticVxD"="*VMPOLL"
 "Start"=hex:00
 
 [HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\VxD\SHELL]
@@ -2793,12 +2790,10 @@ REGEDIT4
 "vdd.vxd"=hex:00
 "vflatd.vxd"=hex:00
 "vmouse.vxd"=hex:00
-"vshare.vxd"=hex:00
 "vwin32.vxd"=hex:00
 "vfbackup.vxd"=hex:00
 "vcomm.vxd"=hex:00
 "combuff.vxd"=hex:00
-"vcd.vxd"=hex:00
 "vpd.vxd"=hex:00
 "ifsmgr.vxd"=hex:00
 "ios.vxd"=hex:00
@@ -2823,7 +2818,6 @@ REGEDIT4
 "v86mmgr.vxd"=hex:00
 "pageswap.vxd"=hex:00
 "dosmgr.vxd"=hex:00
-"vmpoll.vxd"=hex:00
 "shell.vxd"=hex:00
 "parity.vxd"=hex:00
 "biosxlat.vxd"=hex:00
@@ -3351,7 +3345,7 @@ higher than the actual number of bytes written may be reported."
 "DPIPhysicalX"="96"
 "DPIPhysicalY"="96"
 "BitsPerPixel"="32"
-"Resolution"="1000,800"
+"Resolution"="640,480"
 
 [HKEY_LOCAL_MACHINE\Config\0001\Display\Fonts]
 "MS Serif 8,10,12,14,18,24 (VGA res)"="serife.fon"

@@ -23,5 +23,6 @@ qemu-system-i386 -hda os-reg.img
 
 mcopy -i os-reg.img@@32256 ::/WINDOWS/SYSTEM.DAT ../../win-runtime/filesystem/WINDOWS/SYSTEM.DAT
 mcopy -i os-reg.img@@32256 ::/WINDOWS/USER.DAT ../../win-runtime/filesystem/WINDOWS/USER.DAT
+# mcopy -i os-reg.img@@32256 ::/VMM32.VXD ../../win-runtime/filesystem/WINDOWS/SYSTEM/VMM32.VXD
 
 rm os-reg.img
