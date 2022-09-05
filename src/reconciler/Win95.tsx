@@ -14,7 +14,7 @@ import useMeasure from 'react-use-measure';
 import mergeRefs from 'react-merge-refs';
 import debounce from 'lodash/debounce';
 import { LOWORD } from '../emulator95/constants';
-import { Binaries, EmulatorAPI, EmulatorState, EventPayload, initEmulator, ResponseType } from '../emulator95/emulator';
+import { Binaries, EmulatorAPI, EmulatorState, initEmulator } from '../emulator95/emulator';
 import { reconciler } from './reconciler';
 
 export interface Win95Ref {

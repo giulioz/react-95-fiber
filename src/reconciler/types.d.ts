@@ -3,7 +3,7 @@ declare global {
   namespace JSX {
     interface IntrinsicElements {
       w95Window: {
-        ref?: React.Ref<{ id: number } | null | undefined>;
+        ref?: React.Ref<{ hwnd: number } | null | undefined>;
         type: 'Button' | 'Static' | 'Edit' | 'WindowsApp';
         text?: string;
         extStyle?: number;
@@ -15,6 +15,7 @@ declare global {
         menuId?: number;
         children?: null | string | JSX.Element | (string | JSX.Element | null)[];
         onEvent?: (e: EventPayload, ref: Win95Ref) => void;
+        onReady?: () => void;
       };
 
       w95Font: {

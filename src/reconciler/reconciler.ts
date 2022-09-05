@@ -10,7 +10,7 @@ type NodeType =
       | { type: 'text'; content: string }
       | {
           type: 'w95Window';
-          id: number;
+          hwnd: number;
           props: {
             extStyle?: number;
             windowType: string;
@@ -22,6 +22,7 @@ type NodeType =
             h: number;
             menuId?: number;
             onEvent?: () => void;
+            onReady?: () => void;
           };
         }
       | {
@@ -49,61 +50,70 @@ async function appendChild(parentInstance: NodeType, child: NodeType) {
   // console.log('appendChild', { parentInstance, child });
 
   if (child.type === 'w95Window') {
-    const menuId = child.props.menuId !== undefined ? child.props.menuId : child.id || 0;
-    child.root.api.createWindow({
-      id: child.id,
-      type: child.props.windowType,
-      text: child.props.text || '',
-      params: child.props.params,
-      x: child.props.x,
-      y: child.props.y,
-      w: child.props.w,
-      h: child.props.h,
-      parentId: parentInstance.type === 'w95Window' ? parentInstance.id : 0,
-      menuId,
-      extStyle: child.props.extStyle || 0,
+    const menuId = child.props.menuId !== undefined ? child.props.menuId : getIncremental() || 0;
+    const hwnd = await child.root.api.createWindow({
+      lpClassName: child.props.windowType,
+      lpWindowName: child.props.text || '',
+      dwStyle: child.props.params,
+      dwExStyle: child.props.extStyle || 0,
+      X: child.props.x,
+      Y: child.props.y,
+      nWidth: child.props.w,
+      nHeight: child.props.h,
+      hWndParent: parentInstance.type === 'w95Window' ? parentInstance.hwnd : 0 || 0,
+      hMenu: menuId,
     });
+    if (hwnd !== undefined) {
+      child.hwnd = hwnd;
+      // console.log(child.props.text, hwnd);
+      child.props.onReady?.();
+    }
     if (child.props.onEvent) {
       if (!child.root.events.get(menuId)) child.root.events.set(menuId, []);
       child.root.events.get(menuId)?.push(child.props.onEvent);
     }
   }
 
-  if (child.type === 'w95Font' && parentInstance.type === 'w95Window') {
-    const fontHandle = await child.root.api.createFont({
-      lfWidth: child.props.width || 0,
-      lfHeight: child.props.height || 0,
-      lfWeight: child.props.weight || 0,
-      lfItalic: child.props.italic ? 1 : 0,
-      lfUnderline: child.props.underline ? 1 : 0,
-      lfStrikeOut: child.props.strikeOut ? 1 : 0,
-      lfFaceName: child.props.faceName,
-    });
-    child.handle = fontHandle;
-    child.parent = parentInstance;
-    await child.root.api.sendMessage(parentInstance.id, WM_SETFONT, fontHandle, 1);
-  }
+  // if (child.type === 'w95Font' && parentInstance.type === 'w95Window') {
+  //   const fontHandle = await child.root.api.createFont({
+  //     lfWidth: child.props.width || 0,
+  //     lfHeight: child.props.height || 0,
+  //     lfWeight: child.props.weight || 0,
+  //     lfItalic: child.props.italic ? 1 : 0,
+  //     lfUnderline: child.props.underline ? 1 : 0,
+  //     lfStrikeOut: child.props.strikeOut ? 1 : 0,
+  //     lfFaceName: child.props.faceName,
+  //   });
+  //   child.handle = fontHandle;
+  //   child.parent = parentInstance;
+  //   await child.root.api.sendMessage(parentInstance.id, WM_SETFONT, fontHandle, 1);
+  // }
 }
 
-function appendChildToContainer(parentInstance: NodeType, child: NodeType) {
+async function appendChildToContainer(parentInstance: NodeType, child: NodeType) {
   // console.log('appendChildToContainer', { parentInstance, child });
 
-  appendChild(parentInstance, child);
-  child.children?.forEach(c => appendChildToContainer(child, c));
+  await appendChild(parentInstance, child);
+  if (child.children) {
+    for (let i = 0; i < child.children.length; i++) {
+      const c = child.children[i];
+      await appendChildToContainer(child, c);
+    }
+  }
 }
 
 function removeChild(parentInstance: NodeType, child: NodeType) {
   if (child.type === 'w95Window') {
-    if (child.props.onEvent) {
-      const eventChain = child.root.events.get(child.id);
-      if (eventChain) {
-        const newEventChain = eventChain.filter(e => e !== child.props.onEvent);
-        if (newEventChain.length > 0) child.root.events.set(child.id, newEventChain);
-        else child.root.events.delete(child.id);
-      }
-    }
+    // if (child.props.onEvent) {
+    //   const eventChain = child.root.events.get(child.id);
+    //   if (eventChain) {
+    //     const newEventChain = eventChain.filter(e => e !== child.props.onEvent);
+    //     if (newEventChain.length > 0) child.root.events.set(child.id, newEventChain);
+    //     else child.root.events.delete(child.id);
+    //   }
+    // }
 
-    child.root.api.destroyWindow(child.id);
+    child.root.api.destroyWindow(child.hwnd);
   }
 }
 
@@ -197,37 +207,37 @@ export const reconciler = Reconciler({
 
     if (instance.type === 'w95Window') {
       if (typeof newProps.children === 'string' && newProps.children !== oldProps.children) {
-        instance.root.api.setWindowText(instance.id, newProps.children);
+        instance.root.api.setWindowText(instance.hwnd, newProps.children);
       } else if (Array.isArray(newProps.children)) {
         const text = newProps.children.reduce((acc: string, child) => acc + (typeof child === 'string' ? child : ''), '');
         const oldText = Array.isArray(oldProps.children) && oldProps.children.reduce((acc, child) => (acc + typeof child === 'string' ? child : ''), '');
-        if (text !== oldText) instance.root.api.setWindowText(instance.id, text);
+        if (text !== oldText) instance.root.api.setWindowText(instance.hwnd, text);
       }
       if (typeof newProps.text === 'string' && newProps.text !== oldProps.text) {
-        instance.root.api.setWindowText(instance.id, newProps.text);
+        instance.root.api.setWindowText(instance.hwnd, newProps.text);
       }
       if (newProps.x !== oldProps.x || newProps.y !== oldProps.y || newProps.w !== oldProps.w || newProps.h !== oldProps.h) {
-        instance.root.api.setWindowPos(instance.id, newProps.x, newProps.y, newProps.w, newProps.h);
+        instance.root.api.setWindowPos(instance.hwnd, newProps.x, newProps.y, newProps.w, newProps.h);
       }
       if (newProps.params !== oldProps.params) {
-        instance.root.api.setWindowLong(instance.id, GWL_STYLE, newProps.params);
+        instance.root.api.setWindowLong(instance.hwnd, GWL_STYLE, newProps.params);
       }
       if (typeof newProps.extStyle === 'number' && newProps.extStyle !== oldProps.extStyle) {
-        instance.root.api.setWindowLong(instance.id, GWL_EXSTYLE, newProps.extStyle);
+        instance.root.api.setWindowLong(instance.hwnd, GWL_EXSTYLE, newProps.extStyle);
       }
     }
 
     if (instance.type === 'w95Font' && instance.parent && instance.parent.type === 'w95Window') {
-      const fontHandle = await instance.root.api.createFont({
-        lfWidth: newProps.width || 0,
-        lfHeight: newProps.height || 0,
-        lfWeight: newProps.weight || 0,
-        lfItalic: newProps.italic ? 1 : 0,
-        lfUnderline: newProps.underline ? 1 : 0,
-        lfStrikeOut: newProps.strikeOut ? 1 : 0,
-        lfFaceName: newProps.faceName,
-      });
-      await instance.root.api.sendMessage(instance.parent.id, WM_SETFONT, fontHandle, 1);
+      // const fontHandle = await instance.root.api.createFont({
+      //   lfWidth: newProps.width || 0,
+      //   lfHeight: newProps.height || 0,
+      //   lfWeight: newProps.weight || 0,
+      //   lfItalic: newProps.italic ? 1 : 0,
+      //   lfUnderline: newProps.underline ? 1 : 0,
+      //   lfStrikeOut: newProps.strikeOut ? 1 : 0,
+      //   lfFaceName: newProps.faceName,
+      // });
+      // await instance.root.api.sendMessage(instance.parent.id, WM_SETFONT, fontHandle, 1);
     }
   },
 
