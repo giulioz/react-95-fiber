@@ -20,11 +20,16 @@ __tests__/__image_snapshots__/__diff_output__
 *.lib
 *.vxd
 *.exp
+*.drv
+*.map
+*.lst
+*.swp
 *.o
 *.img
 .parcel-cache
 *.obj
 !win-runtime/filesystem/**/*
+!win-runtime/utils/**/*
 !win-runtime/filesystem-reg/**/*
 !win-runtime/filesystem-optional/**/*
 !win-runtime/utils
@@ -32,8 +37,10 @@ win-runtime/filesystem/**/bridge.exe
 win-runtime/filesystem-optional/**/opengl32.dll
 win-runtime/filesystem/**/jscomm.vxd
 win-runtime/filesystem/**/jsmouse.vxd
+win-runtime/filesystem/**/virtdisp.drv
 win-runtime/filesystem/**/SYSTEM.DAT
 win-runtime/filesystem/**/USER.DAT
 .vscode
 vc6
 .DS_Store
+open-watcom-c-win32-1.9

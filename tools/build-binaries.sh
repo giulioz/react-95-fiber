@@ -20,6 +20,11 @@ rm -f win-runtime/filesystem/WINDOWS/jsmouse.vxd
 mkdir -p win-runtime/filesystem/WINDOWS/
 mv -f win-runtime/mouse-driver/jsmouse.vxd win-runtime/filesystem/WINDOWS/SYSTEM/jsmouse.vxd
 
+docker run --rm -v $(pwd):/prj giulioz/vc6-docker wine cmd /c z:/prj/win-runtime/video-driver/build.bat
+rm -f win-runtime/filesystem/WINDOWS/virtdisp.drv
+mkdir -p win-runtime/filesystem/WINDOWS/
+mv -f win-runtime/video-driver/virtdisp.drv win-runtime/filesystem/WINDOWS/SYSTEM/virtdisp.drv
+
 docker run --rm -v $(pwd):/prj giulioz/vc6-docker wine cmd /c z:/prj/win-runtime/comm-driver/build.bat
 rm -f win-runtime/filesystem/WINDOWS/jscomm.vxd
 mkdir -p win-runtime/filesystem/WINDOWS/
