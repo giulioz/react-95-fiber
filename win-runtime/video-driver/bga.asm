@@ -197,47 +197,19 @@ bga_vflatd_init PROC NEAR
     mov dx, VflatD_Query
     call DWORD PTR _vflatdEntry
 
-    mov eax, dwPhysFrameBufAddr
-    test eax, eax  ; can we use the linear framebuffer
-    jz no_linear_fb
-
     ; Get a selector for the linear framebuffer
     ; dl  = function number
     ; dh  = flags (must be zero)
     ; eax = physical address of frame buffer
     ; ecx = size of frame buffer
+    mov eax, dwPhysFrameBufAddr
     mov dx, VflatD_Create_Physical_Frame_Buffer
     mov ecx, _dwVideoMemSize
     call DWORD PTR _vflatdEntry
-    jc no_linear_fb  ; couldn't do it. maybe the virtual framebuffer works instead?
     mov _wFrameBufSelector, ax
     mov _dwFrameBufAddr, edx
 
     jmp success
-
-  no_linear_fb:
-
-    ; Get a selector for the virtual bank-switched framebuffer
-    ; dl    = function number
-    ; dh    = flags (must be zero)
-    ; eax   = size of frame buffer
-    ; ebx   = bank size
-    ; esi   = physical address of bank
-    ; es:di = bank switch code
-    ; cx    = size of bank switch code
-    xor edi, edi
-    lea di, OFFSET BankSwitchRoutine  ; di = bank switch code offset
-    mov ax, _INIT32
-    mov es, ax                 ; es = bank switch code segment
-    mov ecx, BankSwitchRoutineSize
-    mov eax, _dwFrameBufSize    ; eax = frame buffer size
-    mov ebx, 10000h            ; ebx = bank size
-    mov esi, 0A0000h           ; esi = physical memory address of bank
-    mov dx, VflatD_Create_Virtual_Frame_Buffer
-    call DWORD PTR _vflatdEntry
-    jc failure
-    mov _wFrameBufSelector, ax
-    mov _dwFrameBufAddr, edx
 
   success:
     mov ax, 1
@@ -283,34 +255,5 @@ bga_write_reg PROC NEAR
 bga_write_reg ENDP
 
 _INIT ENDS
-
-
-;-------------------------------------------------------------------------------
-; Code (32-bit)
-;-------------------------------------------------------------------------------
-_INIT32 SEGMENT PUBLIC USE32 'CODE'
-
-; Framebuffer bank switching routine
-; When calling VflatD_Create_Virtual_Frame_Buffer, this routine is copied
-; inline and is run in 32-bit ring 0 as a page fault handler by VFLATD. Hence
-; there is no "ret" at the end. All registers must be saved except for EAX, EDX,
-; and Flags.
-; Parameters:
-;    eax = bank to be swapped in
-PUBLIC BankSwitchRoutine
-BankSwitchRoutine:
-    shl eax, 16    ; save bank number
-    ; Select register index
-    mov dx, 01CEh  ; VBE_DISPI_IOPORT_INDEX (0x01CE)
-    mov ax, 0005h  ; VBE_DISPI_INDEX_BANK (0x005)
-    out dx, ax
-    ; Write bank number
-    shr eax, 16
-    inc edx        ; VBE_DISPI_IOPORT_DATA (0x01CF)
-    out dx, ax
-BankSwitchRoutineSize = $ - BankSwitchRoutine
-
-_INIT32 ENDS
-
 
 END
